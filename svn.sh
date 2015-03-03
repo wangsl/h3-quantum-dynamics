@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# $Id$
+
 function svnId()
 {
     for f in $*; do
