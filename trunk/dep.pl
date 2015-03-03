@@ -1,7 +1,9 @@
-#!/usr/bin/perl -w
+#!/bin/env perl
+
+# $Id$
+
 require 5.002;
 use Getopt::Std;
-# $Id$
 
 $a = '';
 
