@@ -19,16 +19,18 @@ mT = 3.0160492*MassAU;
 
 masses = [ mH mH mH ];
 
-R = linspace(0.4, 14.0, 256);
-r = linspace(0.4, 8.0, 256);
+R = linspace(0.2, 14.0, 256);
+r = linspace(0.2, 14.0, 256);
+Theta = 90.0/180.0*pi;
 
-V = H3CollinearJacobiPES(R, r);
+tic
+V = H3JacobiPES(R, r, Theta);
+toc
 
-[ ~, hPES ] = contour(R, r, V', [ -0.1:0.01:-0.001 0.001:0.01:0.4 ]);
+[ ~, hPES ] = contourf(R, r, V', [ -0.1:0.01:-0.001 0.001:0.01:0.3 ]);
 set(hPES, 'LineWidth', 0.75);
 set(hPES, 'LineColor', 'black');
 colorbar('vert');
-%axis square
-%hold on;
+axis square
 
-
+return
