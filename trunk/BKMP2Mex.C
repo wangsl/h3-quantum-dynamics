@@ -33,12 +33,15 @@ void mexFunction(int nlhs, mxArray *plhs[],
   assert(r1);
   const int m = mxGetM(prhs[i]);
   const int n = mxGetN(prhs[i]);
-  
+
+  if(n > 1) 
+    mexErrMsgTxt("BKMP2Mex input one dimensional vector only");
+
   i++;
   const double *r2 = mxGetPr(prhs[i]);
   assert(r2);
   assert(m == mxGetM(prhs[i]) && n == mxGetN(prhs[i]));
-
+  
   i++;
   const double *r3 = mxGetPr(prhs[i]);
   assert(r3);
@@ -48,7 +51,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
     plhs[0] = mxCreateDoubleMatrix(m, n, mxREAL);
     double *pl0 = mxGetPr(plhs[0]);
     
-#pragma omp parallel for if(n > 100)		\
+#pragma omp parallel for if(m*n > 100)		\
   default(shared) schedule(static, 1)		      
     for(int i = 0; i < m*n; i++) {
       double &v = pl0[i];
@@ -63,7 +66,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
     plhs[1] = mxCreateDoubleMatrix(3*m, n, mxREAL);
     double *pl1 = mxGetPr(plhs[1]);
     
-#pragma omp parallel for if(n > 100)		\
+#pragma omp parallel for if(m*n > 100)		\
   default(shared) schedule(static, 1)		      
     for(int i = 0; i < m*n; i++) {
       double &v = pl0[i];
