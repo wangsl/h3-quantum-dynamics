@@ -22,8 +22,8 @@ mT = 3.0160492*MassAU;
 
 masses = [ mH mH mH ];
 
-R = linspace(0.4, 9.0, 256);
-r = linspace(0.4, 7.0, 128);
+R = linspace(0.4, 9.0, 512);
+r = linspace(0.4, 7.0, 512);
 Theta = linspace(0.0, pi, 19);
 
 tic
@@ -40,14 +40,14 @@ for i = 1 : n
     subplot(n, m, k)
     
     [ ~, hPES ] = contourf(R, r, V(:,:,k)', [ -0.1:0.01:-0.001 ...
-		    0.001:0.01:0.3 ]);
+		    0.001:0.01:0.20 ]);
     set(gca, 'xtick', [1:2:max(R)]);
     set(gca, 'ytick', [1:2:max(r)]);
     set(hPES, 'LineWidth', 0.75);
     set(hPES, 'LineColor', 'black');
     %colorbar('vert');
     colormap cool;
-    axis square
+    %axis square
   end
 end
 
