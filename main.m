@@ -10,7 +10,7 @@ format long
 global masses
 global UseLSTH
 
-UseLSTH = true;
+% UseLSTH = true;
 
 ElectronMass = 9.10938291E-31;
 AMU = 1.66053892E-27;
