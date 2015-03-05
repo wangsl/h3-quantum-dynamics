@@ -3,7 +3,9 @@
 
 % Ref: J. Chem. Phys. 104. 7139 (1996)
 
-function [ varargout ] = BKMP2(r1, r2, r3)
+function [ varargout ] = H3PESBKMP2(r1, r2, r3)
+
+fprintf(1, 'To use BKMP2 PES\n')
 
 vH2Min = -0.174495770896975;
 

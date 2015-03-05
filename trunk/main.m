@@ -8,6 +8,9 @@ clc
 format long
 
 global masses
+global UseLSTH
+
+UseLSTH = true;
 
 ElectronMass = 9.10938291E-31;
 AMU = 1.66053892E-27;
@@ -22,7 +25,9 @@ masses = [ mH mH mH ];
 R = linspace(0.4, 14.0, 256);
 r = linspace(0.4, 8.0, 256);
 
-V = H3CollinearJacobiPES(R, r);
+tic
+V = H3PESCollinearJacobi(R, r);
+toc
 
 [ ~, hPES ] = contour(R, r, V', [ -0.1:0.01:-0.001 0.001:0.01:0.4 ]);
 set(hPES, 'LineWidth', 0.75);
