@@ -1,7 +1,7 @@
 
 % $Id$
 
-function [ V ] = H3JacobiPES(R, r, Theta)
+function [ V ] = H3PESJacobi(R, r, Theta)
 
 global masses
 
@@ -26,9 +26,10 @@ r12 = sqrt((f2*y).^2 + x.^2 - 2*f2*y.*x.*cos(z));
 r13 = sqrt((f3*y).^2 + x.^2 + 2*f3*y.*x.*cos(z));
 
 Grids = find(r12>rMin & r13>rMin & r23>rMin);
-V(Grids) = BKMP2(r12(Grids), r23(Grids), r13(Grids));
+V(Grids) = H3PES(r12(Grids), r23(Grids), r13(Grids));
 
 V = V';
 
 return
+
 
