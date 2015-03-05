@@ -9,16 +9,16 @@ fprintf(1, 'To use BKMP2 PES\n')
 
 % r1, r2 and r3 should be one dimensional array
 
-assert(size(r1,1) == numel(r1));
-assert(size(r2,1) == numel(r2));
-assert(size(r3,1) == numel(r3));
+R1 = reshape(r1, [numel(r1), 1]);
+R2 = reshape(r2, [numel(r2), 1]);
+R3 = reshape(r3, [numel(r3), 1]);
 
 vH2Min = -0.174495770896975;
 
 if nargout == 0 | nargout == 1
-  varargout{1} = BKMP2Mex(r1, r2, r3);
+  varargout{1} = BKMP2Mex(R1, R2, R3);
 elseif nargout == 2
-  [ varargout{1}, varargout{2} ] = BKMP2Mex(r1, r2, r3);
+  [ varargout{1}, varargout{2} ] = BKMP2Mex(R1, R2, R3);
 end
 
 varargout{1} = varargout{1} - vH2Min;
