@@ -1,7 +1,7 @@
 
 % $Id$
 
-function [ e, psi ] = H2Wavefunction(R, varargin)
+function [ e, psi ] = H2VibRotWaveFunction(R, jRot, varargin)
 
 n = R.n;
 dr = R.dr;
@@ -26,7 +26,7 @@ end
 
 H = H/(2*mu*dr*dr);
 
-V = H2PES(r);
+V = H2PES(r)' + jRot*(jRot+1)./(2*mu*r.^2);
 V = reshape(V, [1, numel(V)]);
 
 % Get diagonal elements
@@ -43,4 +43,7 @@ e = e(nVbs);
 psi = vecs(:, nVbs)/sqrt(dr);
 
 return
+
+
+
 
