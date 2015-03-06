@@ -9,7 +9,13 @@ function svnId()
     done
 }
 
-svn add *.[FChm] *.pl *.sh Makefile-BKMP2Mex.make
+svn add *.[FChm] *.pl *.sh *.inc *.make 
 
-svnId add *.[FChm] *.pl *.sh Makefile-BKMP2Mex.make
+svnId *.[FChm] *.pl *.sh *.inc *.make 
+
+
+
+
+
+
 
