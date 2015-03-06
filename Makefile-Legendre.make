@@ -19,11 +19,11 @@ FFLAGS =
 
 Link = $(CXX) -shared-intel -shared
 
-LIBS = -lifcoremt
+LIBS = #-lifcoremt
 
-EXE = BKMP2Mex.mexa64
+EXE = GaussLegendreMex.mexa64
 
-OBJS = $(O)/bkmp2.o $(O)/BKMP2Mex.o
+OBJS = $(O)/GaussLegendre.o  $(O)/GaussLegendreMex.o
 
 $(EXE) : $(OBJS)
 	$(Link) $(CXXFLAGS) -o $(EXE) $(OBJS) $(LIBS)
