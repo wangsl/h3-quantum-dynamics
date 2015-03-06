@@ -50,7 +50,7 @@ end
 toc
 
 subplot(2,1,2);
-plot(x, real(G), x, imag(G), 'LineWidth', 3);
+plot(x, real(G), x, imag(G), 'LineWidth', 2);
 hold off
 
 print -dpdf GL-exp-test.pdf

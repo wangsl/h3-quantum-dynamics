@@ -1,12 +1,18 @@
 
 % $Id$
 
-function [ e, psi ] = H2Wavefunction(R, nVb)
+function [ e, psi ] = H2Wavefunction(R, varargin)
 
 n = R.n;
 dr = R.dr;
-mu = R.mass;;
+mu = R.mass;
 r = R.r;
+
+if length(varargin) > 0 
+  nVbs = [ varargin{:} ];
+else
+  nVbs = 0:1:n-1;
+end
 
 H = zeros(n);
 
@@ -21,19 +27,20 @@ end
 H = H/(2*mu*dr*dr);
 
 V = H2PES(r);
+V = reshape(V, [1, numel(V)]);
 
 % Get diagonal elements
-H(1:size(H,1)+1:end) = H(1:size(H,1)+1:end) + V';
+H(1:size(H,1)+1:end) = H(1:size(H,1)+1:end) + V;
 
 [ vecs, energies ] = eig(H);
 
-%vH2Min = -0.174495770896975;
-%e = diag(energies) + vH2Min;
-%psi = vecs/sqrt(dr);
-%return
+% BKMP2 PES
+% vH2Min = -0.174495770896975;
 
-e = energies(nVb+1, nVb+1);
-psi = transpose(vecs(:, nVb+1)/sqrt(dr));
+nVbs = nVbs+1;
+e = diag(energies);
+e = e(nVbs);
+psi = vecs(:, nVbs)/sqrt(dr);
 
 return
 
