@@ -13,7 +13,7 @@ C     $Id$
       
 #include "gauss-legendre-199.inc"
       
-      IStart = Index(N)
+      IStart = Idx(N)
       
       J = 1
       If(N/2*2 .ne. N) then
