@@ -1,4 +1,5 @@
 
+% $Id$
 
 function BooleTest
 
@@ -8,7 +9,7 @@ format long
 
 J = 10;
 
-n = 20*(J-1)+1
+n = 40*(J-1)+1
 x = linspace(-1, 1, n);
 dx = x(2) - x(1)
 

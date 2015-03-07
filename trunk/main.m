@@ -26,14 +26,14 @@ masses = [ mH mH mH ];
 
 vH2Min = -0.174495770896975;
 
-r.n = 8192;
+r.n = 512;
 r.r = linspace(0.4, 16.0, r.n);
 r.dr = r.r(2) - r.r(1);
 r.mass = mH/2;
 
 energy_levels = [ 0 1 10 13 14 15 16 ];
 
-[ e, psi ] = H2Wavefunction(r, energy_levels);
+[ e, psi ] = H2WaveFunction(r, energy_levels);
 
 plot(r.r, psi, 'LineWidth', 2);
 legend(arrayfun(@num2str, energy_levels, 'UniformOutput', false));
