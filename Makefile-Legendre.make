@@ -19,11 +19,11 @@ FFLAGS =
 
 Link = $(CXX) -shared-intel -shared
 
-LIBS = #-lifcoremt
+LIBS = -lifcoremt
 
 EXE = GaussLegendreMex.mexa64
 
-OBJS = $(O)/GaussLegendre.o  $(O)/GaussLegendreMex.o
+OBJS = $(O)/GaussLegendre.o  $(O)/GaussLegendreMex.o $(O)/sort.o
 
 $(EXE) : $(OBJS)
 	$(Link) $(CXXFLAGS) -o $(EXE) $(OBJS) $(LIBS)
