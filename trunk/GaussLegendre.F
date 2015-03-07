@@ -1,13 +1,16 @@
 
 C     $Id$
 
-      SubRoutine GaussLegendre(N, Points, Weight)
+      SubRoutine GaussLegendre(N, Points, Wgt)
       Implicit None
       Integer N
-      Real*8 Points(N), Weight(N)
+      Real*8 Points(N), Wgt(N)
       
       Integer NMax
       Parameter(NMax = 199)
+
+      Integer Key(N)
+      Real*8 Weight(N)
       
       Integer I, J, IStart
       
@@ -30,6 +33,12 @@ C     $Id$
          Points(J) = -X(IStart+I-1)
          Weight(J) = W(IStart+I-1)
          J = J + 1
+      EndDo
+
+      Call Sort2(N, Points, Key)
+
+      Do I = 1, N
+         Wgt(I) = Weight(Key(I))
       EndDo
       
       Return
