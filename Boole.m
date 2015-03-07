@@ -1,6 +1,8 @@
 
 % $Id$
 
+% Ref: Abramowitz and Stegun (1964) P886 Eq. 25.4.14 to 25.4.20
+
 function [ s ] = Boole(f, dx, n)
 switch n 
  case 5
