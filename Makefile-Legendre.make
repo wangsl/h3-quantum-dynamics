@@ -13,7 +13,7 @@ CXX = icpc
 
 CFLAGS =  
 
-CXXFLAGS = -I$(MATLAB_ROOT)/extern/include
+CXXFLAGS = -std=c++0x -I$(MATLAB_ROOT)/extern/include
 
 FFLAGS = 
 
@@ -23,7 +23,7 @@ LIBS = -lifcoremt
 
 EXE = GaussLegendreMex.mexa64
 
-OBJS = $(O)/GaussLegendre.o  $(O)/GaussLegendreMex.o $(O)/sort.o
+OBJS = $(O)/GaussLegendre.o  $(O)/GaussLegendreMex.o $(O)/sortcpp.o
 
 $(EXE) : $(OBJS)
 	$(Link) $(CXXFLAGS) -o $(EXE) $(OBJS) $(LIBS)
