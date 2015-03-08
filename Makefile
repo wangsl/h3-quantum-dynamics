@@ -19,7 +19,7 @@ FFLAGS =
 
 Link = $(CXX)
 
-LIBS = -lifcoremt
+LIBS = -lfftw3_omp -lifcoremt
 
 MEXA64Files = \
 	TimeEvolutionMex.mexa64 \

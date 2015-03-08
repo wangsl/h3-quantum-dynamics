@@ -1,10 +1,10 @@
 
 % $Id$
-
+%
 clear all
 %close all
 
-clc
+%clc
 format long
 
 global UseLSTH
@@ -38,6 +38,7 @@ r2.dr = r2.r(2)-r2.r(1);
 r2.mass = mH/2;
 
 theta.n = int32(180);
+theta.m = int32(120);
 [ theta.x, theta.w ] = GaussLegendre(theta.n);
 
 pot = H3PESJacobi(r1.r, r2.r, acos(theta.x), masses);
@@ -64,7 +65,6 @@ a = sum(sum(conj(PSI).*PSI));
 a = reshape(a, [numel(a), 1]);
 sum(theta.w.*a)*r1.dr*r2.dr
 toc
-
 
 return
 

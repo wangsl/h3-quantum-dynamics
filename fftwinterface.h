@@ -7,6 +7,7 @@
 #include <fftw3.h>
 #include "complex.h"
 #include "rmat.h"
+#include "fftwinterface.h"
 
 class FFTWInterface
 {
