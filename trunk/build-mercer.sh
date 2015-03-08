@@ -54,9 +54,13 @@ alias die='_error_exit_ "Error in file $0 at line $LINENO\n"'
 function special_rules()
 {
     return
+
     local arg=
     for arg in $*; do
-	echo $arg
+	if [ "$arg" == "GaussLegendre.F" ]; then
+	    export OPTIMIZATION_FLAGS_FOR_INTEL_FORTRAN_COMPILERS="-O0 -fPIC -unroll -ip -axavx -xsse4.2 -openmp -vec-report -par-report -openmp-report -fp-model strict"
+	    return
+	fi
     done
 }
 

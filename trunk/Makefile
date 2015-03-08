@@ -30,7 +30,12 @@ OBJS = $(O)/matutils.o $(O)/indent.o $(O)/die.o $(O)/out.o \
 	$(O)/MatlabStructures.o $(O)/MatlabStructuresio.o \
 	$(O)/$(O)/bkmp2.o \
 	$(O)/GaussLegendre.o $(O)/sortcpp.o \
-	$(O)/psitest.o
+	$(O)/psitest.o \
+	$(O)/fftwinterface.o $(O)/timeEvol.o
+
+QMLibs = libqmdyn.a
+
+.DEFAULT_GOAL := TimeEvolutionMex.mexa64
 
 all: $(MEXA64Files)
 
@@ -48,11 +53,14 @@ $(O)/%.o: %.F90
 %io.C: %.h
 	perl io.pl $<
 
-%.mexa64: %.o $(OBJS)
+$(QMLibs): $(OBJS)
+	ar -crusv $(QMLibs) $(OBJS)
+
+%.mexa64: %.o $(QMLibs)
 	$(Link) -shared $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	rm -f *.o *~ *.mod $(EXE) depend $(MEXA64Files)
+	rm -f *.o *~ *.mod $(EXE) depend $(MEXA64Files) $(QMLibs)
 
 depend :
 	$(CXX) $(CXXFLAGS) -MM *.[cC] | perl dep.pl | tee $@
