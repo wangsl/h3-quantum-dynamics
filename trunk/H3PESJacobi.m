@@ -1,9 +1,9 @@
 
 % $Id$
 
-function [ V ] = H3PESJacobi(R, r, Theta)
+function [ V ] = H3PESJacobi(R, r, Theta, masses)
 
-global masses
+% carefully check f2 and f3
 
 f2 = masses(2)/(masses(2)+masses(3));
 f3 = 1 - f2;

@@ -4,7 +4,7 @@
 function [ v ] = LegendreP(n, x)
 
 if n == 0
-  v = 1;
+  v = ones(size(x));
   return
 elseif n == 1
   v = x;
@@ -21,4 +21,3 @@ for i = 2 : n
 end
 
 v = p2;
-

@@ -13,7 +13,7 @@ CXX = icpc
 
 CFLAGS =  
 
-CXXFLAGS = -I$(MATLAB_ROOT)/extern/include
+CXXFLAGS = -std=c++0x -I$(MATLAB_ROOT)/extern/include
 
 FFLAGS = 
 
@@ -21,9 +21,12 @@ Link = $(CXX) -shared-intel -shared
 
 LIBS = -lifcoremt
 
-EXE = BKMP2Mex.mexa64
+EXE = TimeEvolutionMex.mexa64
 
-OBJS = $(O)/bkmp2.o $(O)/BKMP2Mex.o $(O)/matutils.o
+OBJS = $(O)/timeEvolMex.o $(O)/matutils.o \
+	$(O)/indent.o  $(O)/die.o $(O)/out.o \
+	$(O)/MatlabStructures.o $(O)/MatlabStructuresio.o \
+	$(O)/psitest.o
 
 $(EXE) : $(OBJS)
 	$(Link) $(CXXFLAGS) -o $(EXE) $(OBJS) $(LIBS)
@@ -42,6 +45,8 @@ $(O)/%.o: %.for
 	cd $(O) ; $(F77) $(FFLAGS) -c $<
 $(O)/%.o: %.f90
 	cd $(O) ; $(F90) $(FFLAGS) -c $<
+%io.C: %.h
+	perl io.pl $<
 
 clean:
 	rm -f *.o *.dat *~ *.mod *.ti *.ii $(EXE) depend
@@ -50,4 +55,3 @@ depend :
 	$(CXX) $(CXXFLAGS) -MM *.[cC] | perl dep.pl | tee $@
 
 include depend
-
