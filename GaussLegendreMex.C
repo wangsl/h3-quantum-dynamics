@@ -15,7 +15,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
   if(nrhs != 1) 
     mexErrMsgTxt("GaussLegendreMex requires 1 input argument");
   
-  const int n = *mxGetPr(prhs[0]);
+  const int n = *((int *) mxGetData(prhs[0]));
   
   if (n > 199)
     mexErrMsgTxt("GaussLegendreMex: highest order is 199");

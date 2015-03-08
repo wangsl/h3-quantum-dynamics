@@ -3,8 +3,6 @@
 
 function [ v ] = LegendreP2(n, x)
 
-%x = x';
-
 v = zeros([numel(x), n+1]);
 
 if n == 0

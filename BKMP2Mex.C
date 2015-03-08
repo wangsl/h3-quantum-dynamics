@@ -8,6 +8,7 @@ using namespace std;
 
 #include <mex.h>
 #include "fort.h"
+#include "matutils.h"
 
 extern "C" void FORT(bkmp2)(const double *r, double &v, double *dv, const int &id);
 
@@ -30,7 +31,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
   
   int i = 0;
   const double *r1 = mxGetPr(prhs[i]);
-  assert(r1);
+  insist(r1);
   const int m = mxGetM(prhs[i]);
   const int n = mxGetN(prhs[i]);
 
@@ -39,13 +40,13 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
   i++;
   const double *r2 = mxGetPr(prhs[i]);
-  assert(r2);
-  assert(m == mxGetM(prhs[i]) && n == mxGetN(prhs[i]));
+  insist(r2);
+  insist(m == mxGetM(prhs[i]) && n == mxGetN(prhs[i]));
   
   i++;
   const double *r3 = mxGetPr(prhs[i]);
-  assert(r3);
-  assert(m == mxGetM(prhs[i]) && n == mxGetN(prhs[i]));
+  insist(r3);
+  insist(m == mxGetM(prhs[i]) && n == mxGetN(prhs[i]));
 
   if(nlhs == 0 || nlhs == 1) {
     plhs[0] = mxCreateDoubleMatrix(m, n, mxREAL);
