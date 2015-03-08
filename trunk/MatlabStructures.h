@@ -33,6 +33,7 @@ class AngleCoordinate
 {
 public:
   const int &n; // out
+  const int &m; // out
   RVec x;
   RVec w;
 

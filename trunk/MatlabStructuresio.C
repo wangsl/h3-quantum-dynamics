@@ -1,5 +1,5 @@
 
-/* created at: 2015-03-08 12:33:46 */
+/* created at: 2015-03-08 16:18:57 */
 
 #include <iostream>
 using namespace std;
@@ -38,5 +38,6 @@ ostream & operator <<(ostream &s, const AngleCoordinate &c)
 void AngleCoordinate::write_fields(ostream &s) const
 {
   s << Indent() << "n " << n << "\n";
+  s << Indent() << "m " << m << "\n";
 }
 

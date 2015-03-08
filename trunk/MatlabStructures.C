@@ -13,7 +13,8 @@ RadialCoordinate::RadialCoordinate(const mxArray *mx) :
 }
 
 AngleCoordinate::AngleCoordinate(const mxArray *mx) :
-  n(*(int *) mxGetData(mx, "n"))
+  n(*(int *) mxGetData(mx, "n")),
+  m(*(int *) mxGetData(mx, "m"))
 {
   x = RVec(n, (double *) mxGetData(mx, "x"));
   w = RVec(n, (double *) mxGetData(mx, "w"));

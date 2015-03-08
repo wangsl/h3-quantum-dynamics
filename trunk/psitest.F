@@ -74,6 +74,5 @@ C$OMP End Parallel Do
       Call mexPrintf(Line//achar(10))
       
       End
-
 #endif
 
