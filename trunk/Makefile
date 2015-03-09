@@ -31,7 +31,8 @@ OBJS = $(O)/matutils.o $(O)/indent.o $(O)/die.o $(O)/out.o \
 	$(O)/$(O)/bkmp2.o \
 	$(O)/GaussLegendre.o $(O)/sortcpp.o \
 	$(O)/psitest.o \
-	$(O)/fftwinterface.o $(O)/timeEvol.o
+	$(O)/fftwinterface.o $(O)/timeEvol.o  $(O)/LegTransform.o \
+	$(O)/aclear.o
 
 QMLibs = libqmdyn.a
 

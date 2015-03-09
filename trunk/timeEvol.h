@@ -21,8 +21,14 @@ public:
 
   double module() const;
 
-  void forward_transform();
-  void backward_transform();
+  void forward_fft_transform();
+  void backward_fft_transform();
+
+  void forward_legendre_transform();
+  void backward_legendre_transform();
+  
+  //void psi_to_legendre_psi();
+  //void legendre_psi_to_psi();
 
 private:
   
@@ -33,6 +39,7 @@ private:
   const AngleCoordinate &theta;
 
   Vec<FFTWInterface *> fftw;
+  Mat<Complex> legendre_psi;
 
   void setup_fftw();
   void destroy_fftw();

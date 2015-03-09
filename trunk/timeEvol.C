@@ -4,6 +4,16 @@
 #include "timeEvol.h"
 #include "mat.h"
 
+extern "C" {
+  void FORT(forwardlegendretransform)(const Complex *CPsi, Complex *LPsi, 
+				      const int &NR, const int &NTheta, const int &NLeg, 
+				      const double *W, const double *LegP);
+  
+  void FORT(backwardlegendretransform)(Complex *CPsi, const Complex *LPsi, 
+				       const int &NR, const int &NTheta, const int &NLeg, 
+				       const double *W, const double *LegP);
+}
+
 TimeEvolution::TimeEvolution(double *pot_, Complex *psi_,
 			     const RadialCoordinate &r1_, const RadialCoordinate &r2_,
 			     const AngleCoordinate &theta_) :
@@ -73,19 +83,44 @@ void TimeEvolution::setup_fftw()
   }
 }
 
-void TimeEvolution::forward_transform()
+void TimeEvolution::forward_fft_transform()
 {
   setup_fftw();
   for(int i = 0; i < fftw.size(); i++) 
     fftw[i]->forward_transform();
 }
 
-void TimeEvolution::backward_transform()
+void TimeEvolution::backward_fft_transform()
 {
   setup_fftw();
   for(int i = 0; i < fftw.size(); i++) 
     fftw[i]->backward_transform();
 }
 
+void TimeEvolution::forward_legendre_transform()
+{
+  cout << " TimeEvolution::forward_legendre_transform" << endl;
+  
+  const int &n1 = r1.n;
+  const int &n2 = r2.n;
+  const int &n_theta = theta.n;
+  const int &m = theta.m;
+  
+  legendre_psi.resize(n1*n2, m);
+  
+  FORT(forwardlegendretransform)(psi, legendre_psi, n1*n2, n_theta, m, 
+				 theta.w, theta.legendre);
+}
 
+void TimeEvolution::backward_legendre_transform()
+{
+  cout << " TimeEvolution::backward_legendre_transform" << endl;
 
+  const int &n1 = r1.n;
+  const int &n2 = r2.n;
+  const int &n_theta = theta.n;
+  const int &m = theta.m;
+  
+  FORT(backwardlegendretransform)(psi, legendre_psi, n1*n2, n_theta, m, 
+				  theta.w, theta.legendre);
+}

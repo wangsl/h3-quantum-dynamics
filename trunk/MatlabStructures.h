@@ -36,6 +36,7 @@ public:
   const int &m; // out
   RVec x;
   RVec w;
+  RMat legendre; 
 
   AngleCoordinate(const mxArray *mx);
 
