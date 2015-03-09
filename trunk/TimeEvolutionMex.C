@@ -55,7 +55,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   
   const double n1n2 = n1*n2;
   
-  for(int i = 0; i<1000; i++) {
+  for(int i = 0; i < 1000; i++) {
     
     cout << i << endl;
 

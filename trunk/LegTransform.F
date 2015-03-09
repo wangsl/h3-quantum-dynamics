@@ -9,9 +9,22 @@ C     $Id$
       Complex*16 CPsi(NR, NTheta), LPsi(NR, NLeg)
       Real*8 W(NTheta), LegP(NTheta, NLeg)
       
+      Real*8 WLegP(NTheta, NLeg)
       Integer I, K, L
       Real*8 WP, F
-      
+
+C$OMP Parallel Do
+C$OMP& Schedule(Static, 1)
+C$OMP& Default(Shared)
+C$OMP& Private(L, K, F)
+      Do L = 1, NLeg
+         F = L - 0.5D0
+         Do K = 1, NTheta
+            WLegP(K,L) = W(K)*LegP(K,L)*F
+         EndDo
+      EndDo
+C$OMP End Parallel Do
+
       Call AClear(2*NR*NLeg, LPsi)
 
 C$OMP Parallel Do
@@ -20,22 +33,10 @@ C$OMP& Default(Shared)
 C$OMP& Private(L, K, I, WP)
       Do L = 1, NLeg
          Do K = 1, NTheta
-            WP = W(K)*LegP(K,L)
+            WP = WLegP(K,L)
             Do I = 1, NR
                LPsi(I,L) = LPsi(I,L) + WP*CPsi(I,K)
             EndDo
-         EndDo
-      EndDo
-C$OMP End Parallel Do
-
-C$OMP Parallel Do
-C$OMP& Schedule(Static, 1)
-C$OMP& Default(Shared)
-C$OMP& Private(L, I, F)
-      Do L = 1, NLeg
-         F = L - 0.5D0
-         Do I = 1, NR
-            LPsi(I,L) = F*LPsi(I,L)
          EndDo
       EndDo
 C$OMP End Parallel Do
