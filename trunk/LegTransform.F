@@ -25,7 +25,7 @@ C$OMP& Private(L, K, F)
       EndDo
 C$OMP End Parallel Do
 
-      Call DZeros(2*NR*NLeg, LPsi)
+      Call DCZeros(NR*NLeg, LPsi)
 
 C$OMP Parallel Do
 C$OMP& Schedule(Static, 1)
@@ -54,7 +54,7 @@ C$OMP End Parallel Do
       
       Integer I, K, L
       
-      Call DZeros(2*NR*NTheta, CPsi)
+      Call DCZeros(NR*NTheta, CPsi)
       
 C$OMP Parallel Do
 C$OMP& Schedule(Static, 1)
