@@ -55,7 +55,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   
   const double n1n2 = n1*n2;
   
-  for(int i = 0; i < 1000; i++) {
+  for(int i = 0; i < 10; i++) {
     
     cout << i << endl;
 
@@ -70,7 +70,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     time_evol.backward_fft_transform();
     
     cout << " module after FFTW: " << time_evol.module() << endl;
-
+    
     time_evol.forward_legendre_transform();
     time_evol.backward_legendre_transform();
     cout << " module after Leg: " << time_evol.module() << endl;

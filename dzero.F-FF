@@ -2,7 +2,7 @@
 
 C     $Id$
 
-      Subroutine AClear(N, A)
+      Subroutine DZero(N, A)
       Implicit Real*8(A-H,O-Z)
       
       Real*8 A(*)
