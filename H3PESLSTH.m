@@ -7,7 +7,12 @@
 
 function [ V ] = H3PESLSTH(r1, r2, r3)
 
-fprintf(1, 'To use LSTH PES\n')
+persistent first
+
+if isempty(first)
+  fprintf(1, 'To use LSTH PES\n')
+  first = 0;
+end
 
 EH2Min = -1.1744746 + 1;
 

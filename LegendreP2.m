@@ -3,7 +3,8 @@
 
 function [ v ] = LegendreP2(n, x)
 
-v = zeros([numel(x), n+1]);
+x = reshape(x, [numel(x), 1]);
+v = zeros(numel(x), n+1);
 
 if n == 0
   v(:,1) = 1;

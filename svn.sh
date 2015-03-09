@@ -9,9 +9,12 @@ function svnId()
     done
 }
 
-svn add *.[FChm] *.pl *.sh *.inc *.make Makefile
+svn add *.[FChm] *.pl *.sh *.inc Makefile
 
-svnId *.[FChm] *.pl *.sh *.inc *.make Makefile
+svnId *.[FChm] *.pl *.sh *.inc Makefile
+
+exit
+
 
 
 

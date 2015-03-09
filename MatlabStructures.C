@@ -18,5 +18,10 @@ AngleCoordinate::AngleCoordinate(const mxArray *mx) :
 {
   x = RVec(n, (double *) mxGetData(mx, "x"));
   w = RVec(n, (double *) mxGetData(mx, "w"));
+  
+  double *p = (double *) mxGetData(mx, "legendre");
+  insist(p);
+
+  legendre = RMat(n, m, p);
 }
   

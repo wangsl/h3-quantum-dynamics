@@ -17,7 +17,11 @@ void MatlabCrashLoc(const char *message, const char *file_name, const int line);
 inline void *mxGetData(const mxArray *mx, const char *field)
 {
   insist(mx);
-  return mxGetData(mxGetField(mx, 0, field));
+  mxArray *mxPtr = mxGetField(mx, 0, field);
+  insist(mxPtr);
+  void *ptr = mxGetData(mxPtr);
+  insist(ptr);
+  return ptr;
 }
 
 #endif /* MATUTILS_H */

@@ -5,7 +5,12 @@
 
 function [ varargout ] = H3PESBKMP2(r1, r2, r3)
 
-fprintf(1, 'To use BKMP2 PES\n')
+persistent first
+
+if isempty(first) 
+  fprintf(1, 'To use BKMP2 PES\n');
+  first = 0;
+end
 
 % r1, r2 and r3 should be one dimensional array
 
