@@ -27,31 +27,6 @@ TimeEvolution::~TimeEvolution()
   destroy_fftw();
 }
 
-double TimeEvolution::module() const
-{
-  const int &n1 = r1.n;
-  const int &n2 = r2.n;
-  const int &n_theta = theta.n;
-  const RVec &w = theta.w;
-  
-  Mat<Complex> p(n1*n2, n_theta, psi);
-  
-  double s = 0.0;
-#pragma omp parallel for if(p.columns() > 100)	      \
-  default(shared) schedule(static, 1)                 \
-  reduction(+:s)
-  for(int k = 0; k < p.columns(); k++) {
-    double sk = 0.0;
-    for(int i = 0; i < p.rows(); i++) {
-      sk += abs2(p(i,k));
-    }
-    s += w[k]*sk;
-  }
-  
-  s *= r1.dr*r2.dr;
-  return s;
-}
-
 void TimeEvolution::destroy_fftw()
 {
   for(int i = 0; i < fftw.size(); i++) {
@@ -104,7 +79,7 @@ void TimeEvolution::forward_legendre_transform()
   const int &n1 = r1.n;
   const int &n2 = r2.n;
   const int &n_theta = theta.n;
-  const int &m = theta.m;
+  const int m = theta.m + 1;
   
   legendre_psi.resize(n1*n2, m);
   
@@ -119,8 +94,33 @@ void TimeEvolution::backward_legendre_transform()
   const int &n1 = r1.n;
   const int &n2 = r2.n;
   const int &n_theta = theta.n;
-  const int &m = theta.m;
+  const int m = theta.m + 1;
   
   FORT(backwardlegendretransform)(psi, legendre_psi, n1*n2, n_theta, m, 
 				  theta.w, theta.legendre);
+}
+
+double TimeEvolution::module() const
+{
+  const int &n1 = r1.n;
+  const int &n2 = r2.n;
+  const int &n_theta = theta.n;
+  const RVec &w = theta.w;
+  
+  Mat<Complex> p(n1*n2, n_theta, psi);
+  
+  double s = 0.0;
+#pragma omp parallel for if(p.columns() > 100)	      \
+  default(shared) schedule(static, 1)                 \
+  reduction(+:s)
+  for(int k = 0; k < p.columns(); k++) {
+    double sk = 0.0;
+    for(int i = 0; i < p.rows(); i++) {
+      sk += abs2(p(i,k));
+    }
+    s += w[k]*sk;
+  }
+  
+  s *= r1.dr*r2.dr;
+  return s;
 }

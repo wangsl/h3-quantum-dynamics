@@ -27,9 +27,6 @@ public:
   void forward_legendre_transform();
   void backward_legendre_transform();
   
-  //void psi_to_legendre_psi();
-  //void legendre_psi_to_psi();
-
 private:
   
   double *pot;

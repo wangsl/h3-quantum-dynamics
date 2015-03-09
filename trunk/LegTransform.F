@@ -25,7 +25,7 @@ C$OMP& Private(L, K, F)
       EndDo
 C$OMP End Parallel Do
 
-      Call AClear(2*NR*NLeg, LPsi)
+      Call DZeros(2*NR*NLeg, LPsi)
 
 C$OMP Parallel Do
 C$OMP& Schedule(Static, 1)
@@ -35,7 +35,7 @@ C$OMP& Private(L, K, I, WP)
          Do K = 1, NTheta
             WP = WLegP(K,L)
             Do I = 1, NR
-               LPsi(I,L) = LPsi(I,L) + WP*CPsi(I,K)
+               LPsi(I,L) = LPsi(I,L) + CPsi(I,K)*WP
             EndDo
          EndDo
       EndDo
@@ -54,7 +54,7 @@ C$OMP End Parallel Do
       
       Integer I, K, L
       
-      Call AClear(2*NR*NTheta, CPsi)
+      Call DZeros(2*NR*NTheta, CPsi)
       
 C$OMP Parallel Do
 C$OMP& Schedule(Static, 1)
