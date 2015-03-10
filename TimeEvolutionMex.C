@@ -59,6 +59,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     
     cout << i << endl;
 
+#if 0
     time_evol.forward_fft_transform();
     
 #pragma omp parallel for if(n1*n2*n3 > 100)	\
@@ -74,6 +75,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
     time_evol.forward_legendre_transform();
     time_evol.backward_legendre_transform();
     cout << " module after Leg: " << time_evol.module() << endl;
+#endif
+
+    time_evol.calculate_energy();
   }
 
   std::cout.precision(np);

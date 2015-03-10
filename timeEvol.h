@@ -26,6 +26,8 @@ public:
 
   void forward_legendre_transform();
   void backward_legendre_transform();
+
+  void calculate_energy();
   
 private:
   
@@ -38,8 +40,18 @@ private:
   Vec<FFTWInterface *> fftw;
   Mat<Complex> legendre_psi;
 
-  void setup_fftw();
-  void destroy_fftw();
+  double e_pot;
+  double e_kin;
+  double e_rot;
+
+  void legendre_transform_test() const;
+
+  void setup_fftw_interface();
+  void destroy_fftw_interface();
+
+  void calculate_potential_energy();
+  void calculate_kinetic_energy();
+  void calculate_rotational_energy();
 };
 
 #endif /* TIMEEVOL_H */

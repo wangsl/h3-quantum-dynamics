@@ -1,10 +1,10 @@
 
 % $Id$
-%
-clear all
-%close all
 
-%clc
+clear all
+close all
+clc
+
 format long
 
 global UseLSTH
@@ -24,37 +24,35 @@ masses = [ mH mH mH ];
 
 vH2Min = -0.174495770896975;
 
-r1.n = int32(256);
-r1.r = linspace(0.4, 14.0, r1.n);
+r1.n = int32(512);
+r1.r = linspace(0.4, 16.0, r1.n);
 r1.dr = r1.r(2) - r1.r(1);
 r1.mass = 2*mH/3;
 r1.r0 = 10.0;
 r1.k0 = 4.0;
 r1.delta = 0.12;
 
-r2.n = int32(256);
-r2.r = linspace(0.4, 10.0, r2.n);
+r2.n = int32(512);
+r2.r = linspace(0.4, 16.0, r2.n);
 r2.dr = r2.r(2)-r2.r(1);
 r2.mass = mH/2;
 
-theta.n = int32(80);
-theta.m = int32(60);
+theta.n = int32(20);
+theta.m = int32(10);
 [ theta.x, theta.w ] = GaussLegendre(theta.n);
+
 theta.legendre = LegendreP2(double(theta.m), theta.x);
 
 pot = H3PESJacobi(r1.r, r2.r, acos(theta.x), masses);
 
 jRot = 6;
-nVib = 4;
-%psi = InitWavePacket(r1, r2, theta, jRot, nVib);
+nVib = 2;
 
-%psi = zeros(4,2,2)
-%psi(1,1,1) = 1;
-%psi(2,1,1) = 2;
+[ psi, eH2, psiH2 ] = InitWavePacket(r1, r2, theta, jRot, nVib);
 
-%psi
+H2WaveFunctionAnalysis(r2.r, psiH2, r2.mass, jRot)
 
-psi = InitWavePacket(r1, r2, theta, jRot, nVib);
+eKGaussian = 1/(2*r1.mass)*(r1.k0^2 + 1/(2*r1.delta^2))
 
 tic
 for i = 1 : 1
