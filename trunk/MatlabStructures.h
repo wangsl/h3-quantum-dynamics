@@ -17,6 +17,9 @@ public:
   const double &dr; // out
   const double &mass; // out
 
+  RVec psq2m;
+  RVec one2mr2;
+
   RadialCoordinate(const mxArray *mx);
   
 private:

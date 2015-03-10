@@ -3,7 +3,7 @@
 
 function [ e, psi ] = H2VibRotWaveFunction(R, jRot, varargin)
 
-n = R.n;
+n = double(R.n);
 dr = R.dr;
 mu = R.mass;
 r = R.r;
@@ -43,7 +43,6 @@ e = e(nVbs);
 psi = vecs(:, nVbs)/sqrt(dr);
 
 return
-
 
 
 

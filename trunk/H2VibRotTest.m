@@ -2,9 +2,9 @@
 % $Id$
 
 clear all
-%close all
-
+close all
 clc
+
 format long
 
 global masses
@@ -24,7 +24,7 @@ masses = [ mH mH mH ];
 
 vH2Min = -0.174495770896975;
 
-r.n = 4096;
+r.n = int64(4096);
 r.r = linspace(0.4, 16.0, r.n);
 r.dr = r.r(2) - r.r(1);
 r.mass = mH/2;
