@@ -24,6 +24,10 @@ masses = [ mH mH mH ];
 
 vH2Min = -0.174495770896975;
 
+t.total_steps = int32(100);
+t.time_step = 1.0;
+t.steps = int32(0);
+
 r1.n = int32(512);
 r1.r = linspace(0.4, 16.0, r1.n);
 r1.dr = r1.r(2) - r1.r(1);
@@ -56,7 +60,7 @@ eKGaussian = 1/(2*r1.mass)*(r1.k0^2 + 1/(2*r1.delta^2))
 
 tic
 for i = 1 : 1
-  TimeEvolutionMex(r1, r2, theta, pot, psi)
+  TimeEvolutionMex(r1, r2, theta, pot, psi, t)
 end
 toc
 

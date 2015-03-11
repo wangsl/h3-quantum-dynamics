@@ -53,4 +53,22 @@ private:
   void write_fields(ostream &s) const;
 };
 
+class EvolutionTime
+{
+public:
+  const int &total_steps; // out
+  const double &time_step; // out
+  int &steps; // out
+
+  EvolutionTime(const mxArray *mx);
+
+private:
+  EvolutionTime(const EvolutionTime &);
+  EvolutionTime & operator =(const EvolutionTime &);
+  
+  /* IO */
+  friend ostream & operator <<(ostream &s, const EvolutionTime &c);
+  void write_fields(ostream &s) const;
+};
+
 #endif /* MATLAB_STRUCTURES_H */
