@@ -38,3 +38,9 @@ AngleCoordinate::AngleCoordinate(const mxArray *mx) :
   legendre = RMat(n, m, p);
 }
   
+EvolutionTime::EvolutionTime(const mxArray *mx) :
+  total_steps(*(int *) mxGetData(mx, "total_steps")),
+  steps(*(int *) mxGetData(mx, "steps")),
+  time_step(*(double *) mxGetData(mx, "time_step"))
+{ }
+

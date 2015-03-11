@@ -1,5 +1,5 @@
 
-/* created at: 2015-03-10 15:32:34 */
+/* created at: 2015-03-10 23:05:35 */
 
 #include <iostream>
 using namespace std;
@@ -39,5 +39,21 @@ void AngleCoordinate::write_fields(ostream &s) const
 {
   s << Indent() << "n " << n << "\n";
   s << Indent() << "m " << m << "\n";
+}
+
+ostream & operator <<(ostream &s, const EvolutionTime &c)
+{
+  s << " {\n";
+  IndentPush();
+  c.write_fields(s);
+  IndentPop();
+  return s << Indent() << " }";
+}
+
+void EvolutionTime::write_fields(ostream &s) const
+{
+  s << Indent() << "total_steps " << total_steps << "\n";
+  s << Indent() << "time_step " << time_step << "\n";
+  s << Indent() << "steps " << steps << "\n";
 }
 

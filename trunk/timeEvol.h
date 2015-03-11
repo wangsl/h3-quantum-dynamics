@@ -15,14 +15,19 @@ class TimeEvolution
 public:
   TimeEvolution(double *pot, Complex *psi, 
 		const RadialCoordinate &r1, const RadialCoordinate &r2,
-		const AngleCoordinate &theta);
+		const AngleCoordinate &theta,
+		EvolutionTime &time);
   
   ~TimeEvolution();
 
-  double module() const;
-
-  void forward_fft_transform();
-  void backward_fft_transform();
+  double module_for_psi() const;
+  double module_for_legendre_psi();
+  
+  void forward_fft_for_psi();
+  void backward_fft_for_psi();
+  
+  void forward_fft_for_legendre_psi();
+  void backward_fft_for_legendre_psi();
 
   void forward_legendre_transform();
   void backward_legendre_transform();
@@ -36,22 +41,25 @@ private:
   const RadialCoordinate &r1;
   const RadialCoordinate &r2;
   const AngleCoordinate &theta;
+  EvolutionTime &time;
 
-  Vec<FFTWInterface *> fftw;
-  Mat<Complex> legendre_psi;
+  Complex *_legendre_psi;
+  Complex * &legendre_psi();
 
-  double e_pot;
-  double e_kin;
-  double e_rot;
+  Vec<FFTWInterface *> fftw_for_psi;
+  Vec<FFTWInterface *> fftw_for_legendre_psi;
 
-  void legendre_transform_test() const;
+  void setup_fftw_interface_for_psi();
+  void destroy_fftw_interface_for_psi();
 
-  void setup_fftw_interface();
-  void destroy_fftw_interface();
+  void setup_fftw_interface_for_legendre_psi();
+  void destroy_fftw_interface_for_legendre_psi();
 
-  void calculate_potential_energy();
-  void calculate_kinetic_energy();
-  void calculate_rotational_energy();
+  double potential_energy();
+  double rotational_energy();
+
+  double kinetic_energy_for_psi();
+  double kinetic_energy_for_legendre_psi();
 };
 
 #endif /* TIMEEVOL_H */
