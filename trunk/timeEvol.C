@@ -4,6 +4,10 @@
 #include "timeEvol.h"
 #include "mat.h"
 
+//#define _PrintFunction_ { cout << " " << __func__ << endl; }
+
+#define _PrintFunction_ { }
+
 extern "C" {
   void FORT(forwardlegendretransform)(const Complex *CPsi, Complex *LPsi, 
 				      const int &NR, const int &NTheta, const int &NLeg, 
@@ -14,16 +18,38 @@ extern "C" {
 				       const double *W, const double *LegP);
 }
 
-TimeEvolution::TimeEvolution(double *pot_, Complex *psi_,
-			     const RadialCoordinate &r1_, const RadialCoordinate &r2_,
+TimeEvolution::TimeEvolution(const MatlabArray<double> &m_pot_,
+			     MatlabArray<Complex> &m_psi_,
+			     const RadialCoordinate &r1_, 
+			     const RadialCoordinate &r2_,
 			     const AngleCoordinate &theta_,
-			     EvolutionTime &time_) :
-  pot(pot_), psi(psi_), r1(r1_), r2(r2_), theta(theta_), time(time_),
-  _legendre_psi(0)
-{ } 
+			     EvolutionTime &time_,
+			     const Options &options_) :
+  m_pot(m_pot_), 
+  m_psi(m_psi_), 
+  r1(r1_),
+  r2(r2_), 
+  theta(theta_), 
+  time(time_),
+  options(options_),
+  _legendre_psi(0), 
+  exp_ipot_dt(0), 
+  exp_irot_dt_2(0), 
+  exp_ikin_dt(0)
+{ 
+  pot = m_pot.data;
+  insist(pot);
+
+  psi = m_psi.data;
+  insist(psi);
+
+  _PrintFunction_;
+} 
 
 TimeEvolution::~TimeEvolution()
 {
+  _PrintFunction_;
+  
   pot = 0;
   psi = 0;
   
@@ -31,23 +57,30 @@ TimeEvolution::~TimeEvolution()
   destroy_fftw_interface_for_legendre_psi();
   
   if(_legendre_psi) { delete [] _legendre_psi; _legendre_psi = 0; }
+  if(exp_ipot_dt) { delete [] exp_ipot_dt; exp_ipot_dt = 0; }
+  if(exp_irot_dt_2) { delete [] exp_irot_dt_2; exp_irot_dt_2 = 0; }
+  if(exp_ikin_dt) { delete [] exp_ikin_dt; exp_ikin_dt = 0; }
 }
 
 Complex * &TimeEvolution::legendre_psi()
 {
   if(!_legendre_psi) {
+
+    _PrintFunction_;
+
     const int &n1 = r1.n;
     const int &n2 = r2.n;
     const int m = theta.m + 1;
     _legendre_psi = new Complex [n1*n2*m];
     insist(_legendre_psi);
   }
-
   return _legendre_psi;
 }
 
 void TimeEvolution::destroy_fftw_interface_for_psi()
 {
+  _PrintFunction_;
+
   Vec<FFTWInterface *> &fftw = fftw_for_psi;
   for(int i = 0; i < fftw.size(); i++) {
     if(fftw[i]) {
@@ -60,6 +93,8 @@ void TimeEvolution::destroy_fftw_interface_for_psi()
 
 void TimeEvolution::destroy_fftw_interface_for_legendre_psi()
 {
+  _PrintFunction_;
+
   Vec<FFTWInterface *> &fftw = fftw_for_legendre_psi;
   for(int i = 0; i < fftw.size(); i++) {
     if(fftw[i]) {
@@ -76,6 +111,8 @@ void TimeEvolution::setup_fftw_interface_for_psi()
 
   const int &n_theta = theta.n;
   if(fftw.size() == n_theta) return;
+
+  _PrintFunction_;
   
   fftw_init_threads();
   
@@ -98,6 +135,8 @@ void TimeEvolution::setup_fftw_interface_for_legendre_psi()
 
   const int m = theta.m + 1;
   if(fftw.size() == m) return;
+
+  _PrintFunction_;
   
   fftw_init_threads();
   
@@ -115,6 +154,8 @@ void TimeEvolution::setup_fftw_interface_for_legendre_psi()
 
 void TimeEvolution::forward_fft_for_psi()
 {
+  _PrintFunction_;
+
   setup_fftw_interface_for_psi();
   for(int i = 0; i < fftw_for_psi.size(); i++) 
     fftw_for_psi[i]->forward_transform();
@@ -122,6 +163,8 @@ void TimeEvolution::forward_fft_for_psi()
 
 void TimeEvolution::backward_fft_for_psi()
 {
+  _PrintFunction_;
+
   setup_fftw_interface_for_psi();
   for(int i = 0; i < fftw_for_psi.size(); i++) 
     fftw_for_psi[i]->backward_transform();
@@ -129,6 +172,8 @@ void TimeEvolution::backward_fft_for_psi()
 
 void TimeEvolution::forward_fft_for_legendre_psi()
 {
+  _PrintFunction_;
+
   setup_fftw_interface_for_legendre_psi();
   for(int i = 0; i < fftw_for_legendre_psi.size(); i++) 
     fftw_for_legendre_psi[i]->forward_transform();
@@ -136,6 +181,8 @@ void TimeEvolution::forward_fft_for_legendre_psi()
 
 void TimeEvolution::backward_fft_for_legendre_psi()
 {
+  _PrintFunction_;
+  
   setup_fftw_interface_for_legendre_psi();
   for(int i = 0; i < fftw_for_legendre_psi.size(); i++) 
     fftw_for_legendre_psi[i]->backward_transform();
@@ -143,6 +190,8 @@ void TimeEvolution::backward_fft_for_legendre_psi()
 
 void TimeEvolution::forward_legendre_transform()
 {
+  _PrintFunction_;
+  
   const int &n1 = r1.n;
   const int &n2 = r2.n;
   const int &n_theta = theta.n;
@@ -154,6 +203,8 @@ void TimeEvolution::forward_legendre_transform()
 
 void TimeEvolution::backward_legendre_transform()
 {
+  _PrintFunction_;
+
   const int &n1 = r1.n;
   const int &n2 = r2.n;
   const int &n_theta = theta.n;
@@ -165,6 +216,8 @@ void TimeEvolution::backward_legendre_transform()
 
 double TimeEvolution::module_for_psi() const
 {
+  _PrintFunction_;
+
   const int &n1 = r1.n;
   const int &n2 = r2.n;
   const int &n_theta = theta.n;
@@ -190,6 +243,8 @@ double TimeEvolution::module_for_psi() const
 
 void TimeEvolution::calculate_energy()
 {
+  _PrintFunction_;
+
   double e_kin = kinetic_energy_for_psi();
   double e_rot = rotational_energy();
   double e_pot = potential_energy();
@@ -197,12 +252,12 @@ void TimeEvolution::calculate_energy()
   double e_total = e_kin + e_rot + e_pot;
 
   cout << " Total energy: " << e_total << endl;
-
-  kinetic_energy_for_legendre_psi();
 }
 
 double TimeEvolution::potential_energy()
 {
+  _PrintFunction_;
+
   const int &n1 = r1.n;
   const int &n2 = r2.n;
   const double &dr1 = r1.dr;
@@ -233,6 +288,8 @@ double TimeEvolution::potential_energy()
 
 double TimeEvolution::kinetic_energy_for_psi()
 { 
+  _PrintFunction_;
+
   const int &n1 = r1.n;
   const int &n2 = r2.n;
   const int n_theta = theta.n;
@@ -273,6 +330,8 @@ double TimeEvolution::kinetic_energy_for_psi()
 
 double TimeEvolution::rotational_energy()
 { 
+  _PrintFunction_;
+
   forward_legendre_transform();
 
   const double &dr1 = r1.dr;
@@ -300,6 +359,8 @@ double TimeEvolution::rotational_energy()
     }
     s += sl*l*(l+1)/(l+0.5);
   }
+
+  backward_legendre_transform();
   
   double e_rot = s*dr1*dr2;
 
@@ -310,6 +371,8 @@ double TimeEvolution::rotational_energy()
 
 double TimeEvolution::module_for_legendre_psi()
 { 
+  _PrintFunction_;
+
   const int &n1 = r1.n;
   const int &n2 = r2.n;
   const int m = theta.m + 1;
@@ -340,6 +403,8 @@ double TimeEvolution::module_for_legendre_psi()
 
 double TimeEvolution::kinetic_energy_for_legendre_psi()
 { 
+  _PrintFunction_;
+
   const int &n1 = r1.n;
   const int &n2 = r2.n;
   const double &dr1 = r1.dr;
@@ -381,3 +446,252 @@ double TimeEvolution::kinetic_energy_for_legendre_psi()
   return e_kin;
 }
 
+void TimeEvolution::setup_exp_ipot_dt()
+{
+  if(exp_ipot_dt) return;
+
+  _PrintFunction_;
+  
+  const int &n1 = r1.n;
+  const int &n2 = r2.n;
+  const int &n_theta = theta.n;
+  
+  exp_ipot_dt = new Complex [n1*n2*n_theta];
+  insist(exp_ipot_dt);
+  
+  const double &dt = time.time_step;
+  const Complex Idt(0.0, -dt);
+  
+#pragma omp parallel for			\
+  default(shared) schedule(static, 1)		
+  for(int k = 0; k < n_theta; k++) {
+    RMat v(n1, n2, pot+k*n1*n2);
+    Mat<Complex> p(n1, n2, exp_ipot_dt+k*n1*n2);
+    for(int j = 0; j < n2; j++) {
+      for(int i = 0; i < n1; i++) {
+	p(i,j) = exp(Idt*v(i,j));
+      }
+    }
+  }
+}
+
+void TimeEvolution::setup_exp_irot_dt_2()
+{ 
+  if(exp_irot_dt_2) return;
+
+  _PrintFunction_;
+  
+  const int &n1 = r1.n;
+  const int &n2 = r2.n;
+  const int m = theta.m + 1;
+  
+  exp_irot_dt_2 = new Complex [n1*n2*m];
+  insist(exp_irot_dt_2);
+
+  const double &dt = time.time_step;
+  const Complex Idt2(0.0, -dt/2);
+
+#pragma omp parallel for			\
+  default(shared) schedule(static, 1)	
+  for(int l = 0; l < m; l++) {
+    Mat<Complex> p(n1, n2, exp_irot_dt_2+l*n1*n2);
+    for(int j = 0; j < n2; j++) {
+      const double &I2 = r2.one2mr2[j];
+      for(int i = 0; i < n1; i++) {
+	const double &I1 = r1.one2mr2[i];
+	p(i,j) = exp(l*(l+1)*(I1+I2)*Idt2);
+      }
+    }
+  }
+}
+
+void TimeEvolution::setup_exp_ikin_dt()
+{ 
+  if(exp_ikin_dt) return;
+
+  const int &n1 = r1.n;
+  const int &n2 = r2.n;
+  
+  exp_ikin_dt = new Complex [n1*n2];
+  insist(exp_ikin_dt);
+  
+  const double &dt = time.time_step;
+  const Complex Idt(0.0, -dt);
+  
+  Mat<Complex> p(n1, n2, exp_ikin_dt);
+  
+#pragma omp parallel for			\
+  default(shared) schedule(static, 1)	
+  for(int j = 0; j < n2; j++) {
+    const double &T2 = r2.psq2m[j];
+    for(int i = 0; i < n1; i++) {
+      const double &T1 = r1.psq2m[i];
+      p(i,j) = exp((T1+T2)*Idt)/n1/n2;
+    }
+  }
+}
+
+void TimeEvolution::pre_evolution_with_potential_dt_2()
+{ 
+  _PrintFunction_;
+  
+  setup_exp_ipot_dt();
+  
+  const int &n1 = r1.n;
+  const int &n2 = r2.n;
+  const int &n_theta = theta.n;
+  
+#pragma omp parallel for			\
+  default(shared) schedule(static, 1)	    
+  for(int k = 0; k < n_theta; k++) {
+    const Mat<Complex> v(n1, n2, exp_ipot_dt+k*n1*n2);
+    Mat<Complex> Psi(n1, n2, psi+k*n1*n2);
+    for(int j = 0; j < n2; j++) {
+      for(int i = 0; i < n1; i++) {
+	Psi(i,j) /= sqrt(v(i,j));
+      }
+    }
+  }
+}
+
+void TimeEvolution::evolution_with_potential_dt()
+{ 
+  _PrintFunction_;
+
+  setup_exp_ipot_dt();
+  
+  const int &n1 = r1.n;
+  const int &n2 = r2.n;
+  const int &n_theta = theta.n;
+  
+#pragma omp parallel for			\
+  default(shared) schedule(static, 1)	    
+  for(int k = 0; k < n_theta; k++) {
+    const Mat<Complex> v(n1, n2, exp_ipot_dt+k*n1*n2);
+    Mat<Complex> Psi(n1, n2, psi+k*n1*n2);
+    for(int j = 0; j < n2; j++) {
+      for(int i = 0; i < n1; i++) {
+	Psi(i,j) *= v(i,j);
+      }
+    }
+  }
+}
+
+void TimeEvolution::evolution_with_rotational_dt_2()
+{
+  _PrintFunction_;
+
+  setup_exp_irot_dt_2();
+  
+  const int &n1 = r1.n;
+  const int &n2 = r2.n;
+  const int m = theta.m + 1;
+  
+  Complex *lpsi = legendre_psi();
+  
+#pragma omp parallel for			\
+  default(shared) schedule(static, 1)	
+  for(int l = 0; l < m; l++) {
+    Mat<Complex> rot(n1, n2, exp_irot_dt_2+l*n1*n2);
+    Mat<Complex> LPsi(n1, n2, lpsi+l*n1*n2);
+    for(int j = 0; j < n2; j++) {
+      for(int i = 0; i < n1; i++) {
+	LPsi(i,j) *= rot(i,j);
+      }
+    }
+  }
+}
+
+void TimeEvolution::evolution_with_kinetic_dt()
+{ 
+  setup_exp_ikin_dt();
+
+  const int &n1 = r1.n;
+  const int &n2 = r2.n;
+  const int m = theta.m + 1;
+  
+  Mat<Complex> kin(n1, n2, exp_ikin_dt);
+
+  Complex *lpsi = legendre_psi();
+
+#pragma omp parallel for			\
+  default(shared) schedule(static, 1)	
+  for(int l = 0; l < m; l++) {	       
+    Mat<Complex> LPsi(n1, n2, lpsi+l*n1*n2);
+    for(int j = 0; j < n2; j++) {
+      for(int i = 0; i < n1; i++) {
+	LPsi(i,j) *= kin(i,j);
+      }
+    }
+  }
+}
+
+void TimeEvolution::test()
+{
+  _PrintFunction_;
+
+  pre_evolution_with_potential_dt_2();
+
+  evolution_dt();
+
+  return;
+
+  setup_exp_ipot_dt();
+  setup_exp_irot_dt_2();
+  setup_exp_ikin_dt();
+}
+
+void TimeEvolution::evolution_dt()
+{
+  _PrintFunction_;
+
+  evolution_with_potential_dt();
+
+  forward_legendre_transform();
+
+  evolution_with_rotational_dt_2();
+
+  forward_fft_for_legendre_psi();
+
+  evolution_with_kinetic_dt();
+
+  backward_fft_for_legendre_psi();
+
+  evolution_with_rotational_dt_2();
+
+  backward_legendre_transform();
+}
+
+void TimeEvolution::time_evolution()
+{
+  const int &total_steps = time.total_steps;
+  int &steps = time.steps;
+
+  for(int i_step = 0; i_step < total_steps; i_step++) {
+    
+    cout << "\n Step: " << i_step << endl;
+
+    cout << " Module: " << module_for_psi() << endl;
+    calculate_energy();
+
+    if(i_step == 0 && steps == 0)
+      pre_evolution_with_potential_dt_2();
+    
+    evolution_dt();
+    
+    if(options.wave_to_matlab) {
+      mxArray *mx[] = { (mxArray *) r1.mx, (mxArray *) r2.mx, (mxArray *) theta.mx,
+			(mxArray *) m_pot.mx, (mxArray *) m_psi.mx, (mxArray *) time.mx,
+			(mxArray *) options.mx 
+      };
+
+      const int n = sizeof(mx)/sizeof(mxArray *);
+      
+      cout << n << endl;
+
+      wavepacket_to_matlab(options.wave_to_matlab, n, mx);
+    }
+    
+    steps++;
+  }
+}

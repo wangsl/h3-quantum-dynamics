@@ -1,5 +1,5 @@
 
-/* created at: 2015-03-10 23:05:35 */
+/* created at: 2015-03-13 10:08:40 */
 
 #include <iostream>
 using namespace std;
@@ -55,5 +55,22 @@ void EvolutionTime::write_fields(ostream &s) const
   s << Indent() << "total_steps " << total_steps << "\n";
   s << Indent() << "time_step " << time_step << "\n";
   s << Indent() << "steps " << steps << "\n";
+}
+
+ostream & operator <<(ostream &s, const Options &c)
+{
+  s << " {\n";
+  IndentPush();
+  c.write_fields(s);
+  IndentPop();
+  return s << Indent() << " }";
+}
+
+void Options::write_fields(ostream &s) const
+{
+  if (wave_to_matlab)
+    s << Indent() << "wave_to_matlab " << wave_to_matlab << "\n";
+  if (test_name)
+    s << Indent() << "test_name " << test_name << "\n";
 }
 

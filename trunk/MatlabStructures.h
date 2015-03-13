@@ -12,6 +12,8 @@ using namespace std;
 class RadialCoordinate
 {
 public:
+  const mxArray *mx;
+
   const int &n; // out
   RVec r;
   const double &dr; // out
@@ -35,6 +37,8 @@ private:
 class AngleCoordinate
 {
 public:
+  const mxArray *mx;
+
   const int &n; // out
   const int &m; // out
   RVec x;
@@ -56,6 +60,8 @@ private:
 class EvolutionTime
 {
 public:
+  const mxArray *mx;
+
   const int &total_steps; // out
   const double &time_step; // out
   int &steps; // out
@@ -69,6 +75,27 @@ private:
   /* IO */
   friend ostream & operator <<(ostream &s, const EvolutionTime &c);
   void write_fields(ostream &s) const;
+};
+
+class Options
+{
+public:
+  
+  const mxArray *mx;
+
+  char *wave_to_matlab; // out
+  char *test_name; // out
+
+  Options(const mxArray *mx);
+  ~Options();
+
+private:
+  Options(const Options &);
+  Options & operator =(const Options &);
+
+  friend ostream & operator <<(ostream &s, const Options &c);
+  void write_fields(ostream &s) const;
+
 };
 
 #endif /* MATLAB_STRUCTURES_H */

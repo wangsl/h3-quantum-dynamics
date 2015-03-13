@@ -5,7 +5,17 @@
 #include "matutils.h"
 #include "fftwinterface.h"
 
+void remove_matlab_script_extension(char *script, const char *extension)
+{
+  insist(script);
+  insist(extension);
+  const int len = strlen(script) - strlen(extension);
+  if(!strcmp((const char *) script+len, extension)) 
+    ((char *) script)[len] = '\0';
+}
+
 RadialCoordinate::RadialCoordinate(const mxArray *mx) :
+  mx(mx),
   n(*(int *) mxGetData(mx, "n")),
   dr(*(double *) mxGetData(mx, "dr")),
   mass(*(double *) mxGetData(mx, "mass"))
@@ -26,6 +36,7 @@ RadialCoordinate::RadialCoordinate(const mxArray *mx) :
 }
 
 AngleCoordinate::AngleCoordinate(const mxArray *mx) :
+  mx(mx),
   n(*(int *) mxGetData(mx, "n")),
   m(*(int *) mxGetData(mx, "m"))
 {
@@ -39,8 +50,27 @@ AngleCoordinate::AngleCoordinate(const mxArray *mx) :
 }
   
 EvolutionTime::EvolutionTime(const mxArray *mx) :
+  mx(mx),
   total_steps(*(int *) mxGetData(mx, "total_steps")),
   steps(*(int *) mxGetData(mx, "steps")),
   time_step(*(double *) mxGetData(mx, "time_step"))
 { }
 
+Options::Options(const mxArray *mx) :
+  mx(mx),
+  wave_to_matlab(0),
+  test_name(0)
+{
+  cout << "mx: " << mx << endl;
+  wave_to_matlab = mxGetString(mx, "wave_to_matlab");
+  if(wave_to_matlab)
+    remove_matlab_script_extension(wave_to_matlab, ".m");
+  
+  test_name = mxGetString(mx, "test_name");
+}
+
+Options::~Options()
+{
+  if(wave_to_matlab) { delete [] wave_to_matlab; wave_to_matlab = 0; }
+  if(test_name) { delete [] test_name; test_name = 0; }
+}
