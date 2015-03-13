@@ -28,7 +28,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   
   std::cout << " 3D Time evolotion" << std::endl;
 
-  insist(nrhs>0);
+  insist(nrhs > 0);
 
   RadialCoordinate r1(prhs[0]);
   
@@ -36,16 +36,25 @@ void mexFunction( int nlhs, mxArray *plhs[],
   
   AngleCoordinate theta(prhs[2]);
   
-  double *pot = mxGetPr(prhs[3]);
-  insist(pot);
+  //double *pot = mxGetPr(prhs[3]);
+  //insist(pot);
+
+  MatlabArray<double> pot(prhs[3]);
+
   
-  double *psi = mxGetPr(prhs[4]);
-  insist(psi);
-  
+  //double *psi = mxGetPr(prhs[4]);
+  //insist(psi);
+
+  MatlabArray<Complex> psi(prhs[4]);
+
   EvolutionTime time(prhs[5]);
-  
-  TimeEvolution time_evol(pot, (Complex *) psi, r1, r2, theta, time);
-  
+
+  Options options(prhs[6]);
+
+  cout << options << endl;
+
+  TimeEvolution time_evol(pot, psi, r1, r2, theta, time, options);
+
   cout << " module: " << time_evol.module_for_psi() << endl;
   
   const int n1 = r1.n;
@@ -53,15 +62,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
   const int n3 = theta.n;
   
   const double n1n2 = n1*n2;
-  
-  for(int i = 0; i < 10; i++) {
-    
-    cout << i << endl;
 
-    time_evol.calculate_energy();
+  time_evol.time_evolution();
 
-    cout << time_evol.module_for_legendre_psi() << endl;
-  }
-
+  std::cout.flush();
   std::cout.precision(np);
 }
