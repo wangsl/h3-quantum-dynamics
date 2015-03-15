@@ -8,7 +8,6 @@ clc
 format long
 
 global UseLSTH
-global psi
 
 setenv('OMP_NUM_THREADS', '20');
 
@@ -24,11 +23,11 @@ masses = [ mH mH mH ];
 
 vH2Min = -0.174495770896975;
 
-t.total_steps = int32(10);
-t.time_step = 10.0;
-t.steps = int32(0);
+time.total_steps = int32(1000);
+time.time_step = 10.0;
+time.steps = int32(0);
 
-r1.n = int32(256);
+r1.n = int32(512);
 r1.r = linspace(0.4, 16.0, r1.n);
 r1.dr = r1.r(2) - r1.r(1);
 r1.mass = 2*mH/3;
@@ -36,13 +35,13 @@ r1.r0 = 10.0;
 r1.k0 = 4.0;
 r1.delta = 0.12;
 
-r2.n = int32(256);
+r2.n = int32(512);
 r2.r = linspace(0.4, 16.0, r2.n);
 r2.dr = r2.r(2)-r2.r(1);
 r2.mass = mH/2;
 
-theta.n = int32(120);
-theta.m = int32(100);
+theta.n = int32(180);
+theta.m = int32(120);
 [ theta.x, theta.w ] = GaussLegendre(theta.n);
 
 theta.legendre = LegendreP2(double(theta.m), theta.x);
@@ -63,7 +62,7 @@ eKGaussian = 1/(2*r1.mass)*(r1.k0^2 + 1/(2*r1.delta^2))
 
 tic
 for i = 1 : 1
-  TimeEvolutionMex(r1, r2, theta, pot, psi, t, options)
+  TimeEvolutionMex(r1, r2, theta, pot, psi, time, options)
 end
 toc
 
