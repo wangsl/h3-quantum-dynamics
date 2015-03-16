@@ -36,28 +36,3 @@ extern "C" void FORT(sort2double)(double *x, double *y, const int &n)
 {
   sort2_double(x, y, n);
 }
-
-
-#if 0
-int main()
-{
-  double A[] = {9,6,3,5,7.9};
-  double B[] = {1,2,3,4,5.2};
-
-  std::cout << "Before:" << std::endl;
-  
-  const int n = sizeof(A)/sizeof(double);
-
-  for(int i = 0; i < n; i++) 
-    std::cout << " " << i << " " << A[i] << " " << B[i] << std::endl;
-  
-  sort2_double(A, B, n);
-
-  std::cout << std::endl;
-  for(int i = 0; i < n; i++) 
-    std::cout << " " << i << " " << A[i] << " " << B[i] << std::endl;
-}
-#endif
-
-
-
