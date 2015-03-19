@@ -61,7 +61,6 @@ Options::Options(const mxArray *mx) :
   wave_to_matlab(0),
   test_name(0)
 {
-  cout << "mx: " << mx << endl;
   wave_to_matlab = mxGetString(mx, "wave_to_matlab");
   if(wave_to_matlab)
     remove_matlab_script_extension(wave_to_matlab, ".m");

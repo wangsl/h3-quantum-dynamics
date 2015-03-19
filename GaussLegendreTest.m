@@ -3,19 +3,30 @@
 
 function [] = GaussLegendreTest()
 
-n = 190;
+n = 199; 
 
 [ x, w ] = GaussLegendre(n);
 
 f = myf(x);
 
-plot(x, real(f), x, imag(f), 'ro-');
+plot(x, real(f), x, imag(f), 'LineWidth', 4);
+hold on;
 
-for L = 1 : 60
-  P = LegendreP(L-1,x);
-  s = sum(w.*f.*P);
-  fprintf(1, '%4d %20.15f%20.15f\n', L-1, real(s), imag(s));
-end
+m = 100;
+
+P = LegendreP2(m, x);
+
+L = [0:1:m] + 0.5;
+
+fl = (w.*f)'*P.*L;
+
+f2 = P*fl';
+
+max(abs(real(f-f2)))
+max(abs(imag(f-f2)))
+
+plot(x,real(f2), 'ro-', x,imag(f2), 'ro-');
+hold off;
 
 return
 

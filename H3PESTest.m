@@ -27,7 +27,7 @@ r = linspace(0.4, 7.0, 512);
 Theta = linspace(0.0, pi, 19);
 
 tic
-V = H3PESJacobi(R, r, Theta);
+V = H3PESJacobi(R, r, Theta, masses);
 toc
 
 n = 3;

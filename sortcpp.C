@@ -32,6 +32,7 @@ void sort2_double(double *x, double *y, const int n)
 }
 
 // Fortran version: Sort2Double
+
 extern "C" void FORT(sort2double)(double *x, double *y, const int &n)
 {
   sort2_double(x, y, n);

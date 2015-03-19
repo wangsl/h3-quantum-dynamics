@@ -15,6 +15,7 @@ git add *.[FChm] *.pl *.sh *.inc Makefile
 
 exit
 
+git push origin master
 
 
 

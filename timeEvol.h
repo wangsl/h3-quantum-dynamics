@@ -73,10 +73,10 @@ private:
   void backward_legendre_transform();
   
   double potential_energy();
-  double rotational_energy();
+  double rotational_energy(const int do_legendre_transform = 1);
   
   double kinetic_energy_for_psi();
-  double kinetic_energy_for_legendre_psi();
+  double kinetic_energy_for_legendre_psi(const int do_fft = 1);
 
   void setup_exp_ipot_dt();
   void setup_exp_irot_dt_2();

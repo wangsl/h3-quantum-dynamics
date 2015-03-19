@@ -51,7 +51,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
   Options options(prhs[6]);
 
-  cout << options << endl;
+  //cout << options << endl;
 
   TimeEvolution time_evol(pot, psi, r1, r2, theta, time, options);
 
