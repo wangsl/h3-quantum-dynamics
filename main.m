@@ -25,34 +25,34 @@ vH2Min = -0.174495770896975;
 
 % time
 
-time.total_steps = int32(5000);
+time.total_steps = int32(800);
 time.time_step = 1.0;
 time.steps = int32(0);
 
 % r1: R
 
-r1.n = int32(256);
+r1.n = int32(128);
 r1.r = linspace(0.3, 14.0, r1.n);
 r1.dr = r1.r(2) - r1.r(1);
 r1.mass = 2*mH/3;
-r1.r0 = 4.5;
+r1.r0 = 4.0;
 r1.k0 = 1.0;
 r1.delta = 0.12;
 
 dump1.Cd = 3.0;
 dump1.xd = 12.0;
-dump1.dump = WoodsSaxon(dump1.Cd, dump1.xd, r1.r);
+%dump1.dump = WoodsSaxon(dump1.Cd, dump1.xd, r1.r);
 
 % r2: r
 
 r2.n = int32(128);
 r2.r = linspace(0.3, 12.0, r2.n);
-r2.dr = r2.r(2)-r2.r(1);
+r2.dr = r2.r(2) - r2.r(1);
 r2.mass = mH/2;
 
 dump2.Cd = 3.0;
 dump2.xd = 10.0;
-dump2.dump = WoodsSaxon(dump2.Cd, dump2.xd, r2.r);
+%dump2.dump = WoodsSaxon(dump2.Cd, dump2.xd, r2.r);
 
 % angle:
 

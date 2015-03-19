@@ -9,21 +9,9 @@
 #define _PrintFunction_ { }
 
 extern "C" {
-#if 0
-  void FORT(forwardlegendretransform)(const Complex *CPsi, Complex *LPsi, 
-				      const int &NR, const int &NTheta, const int &NLeg, 
-				      const double *W, const double *LegP);
-#endif
-  
   void FORT(forwardlegendretransform)(const Complex *CPsi, Complex *LPsi, 
 				      const int &NR, const int &NTheta, const int &NLeg, 
 				      const double *WLegP);
-  
-#if 0
-  void FORT(backwardlegendretransform)(Complex *CPsi, const Complex *LPsi, 
-				       const int &NR, const int &NTheta, const int &NLeg, 
-				       const double *W, const double *LegP);
-#endif
   
   void FORT(backwardlegendretransform)(Complex *CPsi, const Complex *LPsi, 
 				       const int &NR, const int &NTheta, const int &NLeg, 
