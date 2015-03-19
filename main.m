@@ -25,34 +25,34 @@ vH2Min = -0.174495770896975;
 
 % time
 
-time.total_steps = int32(1000);
+time.total_steps = int32(5000);
 time.time_step = 1.0;
 time.steps = int32(0);
 
 % r1: R
 
-r1.n = int32(128);
+r1.n = int32(256);
 r1.r = linspace(0.3, 14.0, r1.n);
 r1.dr = r1.r(2) - r1.r(1);
 r1.mass = 2*mH/3;
-r1.r0 = 5.0;
+r1.r0 = 4.5;
 r1.k0 = 1.0;
 r1.delta = 0.12;
 
-r1.dump.Cd = 3.0;
-r1.dump.xd = 12.0;
-r1.dump.dump = WoodsSaxon(r1.dump.Cd, r1.dump.xd, r1.r);
+dump1.Cd = 3.0;
+dump1.xd = 12.0;
+dump1.dump = WoodsSaxon(dump1.Cd, dump1.xd, r1.r);
 
 % r2: r
 
 r2.n = int32(128);
-r2.r = linspace(0.3, 14.0, r2.n);
+r2.r = linspace(0.3, 12.0, r2.n);
 r2.dr = r2.r(2)-r2.r(1);
 r2.mass = mH/2;
 
-r2.dump.Cd = 3.0;
-r2.dump.xd = 10.0;
-r2.dump.dump = WoodsSaxon(r2.dump.Cd, r2.dump.xd, r2.r);
+dump2.Cd = 3.0;
+dump2.xd = 10.0;
+dump2.dump = WoodsSaxon(dump2.Cd, dump2.xd, r2.r);
 
 % angle:
 
@@ -67,7 +67,7 @@ options.wave_to_matlab = 'C2Matlab.m'
 pot = H3PESJacobi(r1.r, r2.r, acos(theta.x), masses);
 
 jRot = 0;
-nVib = 4;
+nVib = 0;
 
 [ psi, eH2, psiH2 ] = InitWavePacket(r1, r2, theta, jRot, nVib);
 
@@ -78,7 +78,7 @@ nVib = 4;
 
 tic
 for i = 1 : 1
-  TimeEvolutionMex(r1, r2, theta, pot, psi, time, options)
+  TimeEvolutionMex(r1, r2, theta, pot, psi, time, options, dump1, dump2)
 end
 toc
 

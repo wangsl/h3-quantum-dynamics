@@ -12,19 +12,23 @@ using namespace std;
 class RadialCoordinate
 {
 public:
-  const mxArray *mx;
-
+  
+  friend class TimeEvolution;
+  
   const int &n; // out
   RVec r;
   const double &dr; // out
   const double &mass; // out
-
+  
   RVec psq2m;
   RVec one2mr2;
-
+  
   RadialCoordinate(const mxArray *mx);
   
 private:
+  
+  const mxArray *mx;
+
   // to prevent assigment and copy operation
   RadialCoordinate(const RadialCoordinate &);
   RadialCoordinate & operator =(const RadialCoordinate &);
@@ -37,8 +41,9 @@ private:
 class AngleCoordinate
 {
 public:
-  const mxArray *mx;
-
+  
+  friend class TimeEvolution;
+  
   const int &n; // out
   const int &m; // out
   RVec x;
@@ -48,6 +53,9 @@ public:
   AngleCoordinate(const mxArray *mx);
 
 private:
+  
+  const mxArray *mx;
+
   // to prevent assigment and copy operation
   AngleCoordinate(const AngleCoordinate &);
   AngleCoordinate & operator =(const AngleCoordinate &);
@@ -60,7 +68,8 @@ private:
 class EvolutionTime
 {
 public:
-  const mxArray *mx;
+
+  friend class TimeEvolution;
 
   const int &total_steps; // out
   const double &time_step; // out
@@ -69,6 +78,9 @@ public:
   EvolutionTime(const mxArray *mx);
 
 private:
+  
+  const mxArray *mx;
+
   EvolutionTime(const EvolutionTime &);
   EvolutionTime & operator =(const EvolutionTime &);
   
@@ -81,7 +93,7 @@ class Options
 {
 public:
   
-  const mxArray *mx;
+  friend class TimeEvolution;
 
   char *wave_to_matlab; // out
   char *test_name; // out
@@ -90,11 +102,30 @@ public:
   ~Options();
 
 private:
+
+  const mxArray *mx;
+
   Options(const Options &);
   Options & operator =(const Options &);
 
   friend ostream & operator <<(ostream &s, const Options &c);
   void write_fields(ostream &s) const;
+};
+
+class DumpFunction
+{
+public:
+  
+  friend class TimeEvolution;
+
+  DumpFunction(const mxArray *mx);
+  ~DumpFunction();
+
+  double *dump; 
+
+private:
+  
+  const mxArray *mx;
 
 };
 

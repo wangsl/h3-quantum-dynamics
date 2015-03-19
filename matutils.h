@@ -21,9 +21,10 @@ inline void *mxGetData(const mxArray *mx, const char *field)
 {
   insist(mx);
   mxArray *mxPtr = mxGetField(mx, 0, field);
-  insist(mxPtr);
+  if(!mxPtr) return 0;
+  //insist(mxPtr);
   void *ptr = mxGetData(mxPtr);
-  insist(ptr);
+  if(!mxPtr) return 0;
   return ptr;
 }
 

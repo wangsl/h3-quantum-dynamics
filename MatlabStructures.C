@@ -46,7 +46,7 @@ AngleCoordinate::AngleCoordinate(const mxArray *mx) :
   double *p = (double *) mxGetData(mx, "legendre");
   insist(p);
 
-  legendre = RMat(n, m, p);
+  legendre = RMat(n, m+1, p);
 }
   
 EvolutionTime::EvolutionTime(const mxArray *mx) :
@@ -73,3 +73,15 @@ Options::~Options()
   if(wave_to_matlab) { delete [] wave_to_matlab; wave_to_matlab = 0; }
   if(test_name) { delete [] test_name; test_name = 0; }
 }
+
+DumpFunction::DumpFunction(const mxArray *mx) :
+  mx(mx), dump(0)
+{
+  dump = (double *) mxGetData(mx, "dump");
+}
+
+DumpFunction::~DumpFunction()
+{
+  if(dump) dump = 0;
+}
+

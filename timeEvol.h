@@ -20,7 +20,9 @@ public:
 		const RadialCoordinate &r2,
 		const AngleCoordinate &theta,
 		EvolutionTime &time,
-		const Options &options);
+		const Options &options, 
+		const DumpFunction &dump1, 
+		const DumpFunction &dump2);
   
   ~TimeEvolution();
 
@@ -46,6 +48,8 @@ private:
   const AngleCoordinate &theta;
   EvolutionTime &time;
   const Options &options;
+  const DumpFunction &dump1;
+  const DumpFunction &dump2;
 
   Complex *_legendre_psi;
   Complex * &legendre_psi();
@@ -53,6 +57,9 @@ private:
   Complex *exp_ipot_dt;
   Complex *exp_irot_dt_2;
   Complex *exp_ikin_dt;
+
+  double *weight_legendre;
+  double *dump;
 
   Vec<FFTWInterface *> fftw_for_psi;
   Vec<FFTWInterface *> fftw_for_legendre_psi;
@@ -82,6 +89,10 @@ private:
   void setup_exp_irot_dt_2();
   void setup_exp_ikin_dt();
 
+  int apply_dump() const { return (dump1.dump && dump2.dump) ? 1 : 0; }
+  void setup_dump();
+  void setup_weight_legendre();
+
   void pre_evolution_with_potential_dt_2();
 
   void evolution_with_potential_dt();
@@ -89,6 +100,8 @@ private:
   void evolution_with_kinetic_dt();
 
   void evolution_dt();
+
+  void dump_psi();
 
 };
 

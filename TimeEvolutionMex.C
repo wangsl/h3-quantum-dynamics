@@ -15,11 +15,6 @@ extern "C" int FORT(myisnan)(const double &x)
   return isnan(x);
 }
 
-extern "C" void FORT(psitest)(const double *psi, 
-			      const int &n1, const int &n2, const int &nTheta,
-			      const double &dr1, const double &dr2, 
-			      const double *x, const double *w);
-
 void mexFunction( int nlhs, mxArray *plhs[],
                   int nrhs, const mxArray *prhs[])
 {
@@ -53,7 +48,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
   //cout << options << endl;
 
-  TimeEvolution time_evol(pot, psi, r1, r2, theta, time, options);
+  DumpFunction dump1(prhs[7]);
+  DumpFunction dump2(prhs[8]);
+
+  cout << dump1.dump << " " << dump2.dump << endl;
+  
+  TimeEvolution time_evol(pot, psi, r1, r2, theta, time, options, dump1, dump2);
 
   cout << " module: " << time_evol.module_for_psi() << endl;
   
