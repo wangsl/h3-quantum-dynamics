@@ -46,7 +46,7 @@ AngleCoordinate::AngleCoordinate(const mxArray *mx) :
   double *p = (double *) mxGetData(mx, "legendre");
   insist(p);
 
-  legendre = RMat(n, m+1, p);
+  legendre = RMat(m+1, n, p);
 }
   
 EvolutionTime::EvolutionTime(const mxArray *mx) :

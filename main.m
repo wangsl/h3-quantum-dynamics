@@ -41,7 +41,7 @@ r1.delta = 0.12;
 
 dump1.Cd = 3.0;
 dump1.xd = 12.0;
-%dump1.dump = WoodsSaxon(dump1.Cd, dump1.xd, r1.r);
+dump1.dump = WoodsSaxon(dump1.Cd, dump1.xd, r1.r);
 
 % r2: r
 
@@ -52,22 +52,25 @@ r2.mass = mH/2;
 
 dump2.Cd = 3.0;
 dump2.xd = 10.0;
-%dump2.dump = WoodsSaxon(dump2.Cd, dump2.xd, r2.r);
+dump2.dump = WoodsSaxon(dump2.Cd, dump2.xd, r2.r);
 
 % angle:
 
-theta.n = int32(60);
+theta.n = int32(80);
 theta.m = int32(60);
 [ theta.x, theta.w ] = GaussLegendre(theta.n);
 
 theta.legendre = LegendreP2(double(theta.m), theta.x);
+theta.legendre = theta.legendre';
+
+% options
 
 options.wave_to_matlab = 'C2Matlab.m'
 
 pot = H3PESJacobi(r1.r, r2.r, acos(theta.x), masses);
 
-jRot = 0;
-nVib = 0;
+jRot = 2;
+nVib = 4;
 
 [ psi, eH2, psiH2 ] = InitWavePacket(r1, r2, theta, jRot, nVib);
 
@@ -77,9 +80,7 @@ nVib = 0;
 %PlotPotWave(r1, r2, pot, psi)
 
 tic
-for i = 1 : 1
-  TimeEvolutionMex(r1, r2, theta, pot, psi, time, options, dump1, dump2)
-end
+TimeEvolutionMex(r1, r2, theta, pot, psi, time, options, dump1, dump2)
 toc
 
 tic

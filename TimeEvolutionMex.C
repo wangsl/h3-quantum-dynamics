@@ -31,14 +31,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   
   AngleCoordinate theta(prhs[2]);
   
-  //double *pot = mxGetPr(prhs[3]);
-  //insist(pot);
-
   MatlabArray<double> pot(prhs[3]);
-
-  
-  //double *psi = mxGetPr(prhs[4]);
-  //insist(psi);
 
   MatlabArray<Complex> psi(prhs[4]);
 
@@ -46,16 +39,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
   Options options(prhs[6]);
 
-  //cout << options << endl;
-
   DumpFunction dump1(prhs[7]);
   DumpFunction dump2(prhs[8]);
 
-  cout << dump1.dump << " " << dump2.dump << endl;
-  
   TimeEvolution time_evol(pot, psi, r1, r2, theta, time, options, dump1, dump2);
 
-  cout << " module: " << time_evol.module_for_psi() << endl;
+  //cout << " module: " << time_evol.module_for_psi() << endl;
   
   const int n1 = r1.n;
   const int n2 = r2.n;

@@ -787,7 +787,7 @@ void  TimeEvolution::setup_weight_legendre()
   for(int l = 0; l < m; l++) {
     const double f = l+0.5;
     for(int k = 0; k < n_theta; k++) {
-      wp(k,l) = f*w[k]*P(k,l);
+      wp(k,l) = f*w[k]*P(l,k);
     }
   }
 }

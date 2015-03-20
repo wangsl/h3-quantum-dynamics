@@ -57,8 +57,8 @@ function special_rules()
 
     local arg=
     for arg in $*; do
-	if [ "$arg" == "GaussLegendre.F" ]; then
-	    export OPTIMIZATION_FLAGS_FOR_INTEL_FORTRAN_COMPILERS="-O0 -fPIC -unroll -ip -axavx -xsse4.2 -openmp -vec-report -par-report -openmp-report -fp-model strict"
+	if [ "$arg" == "TimeEvolutionMex.mexa64" ]; then
+	      append_to_env_variable EXTRA_LINK_FLAGS "-Bstatic -L$MKL_ROOT/lib/intel64 -Wl,--start-group -lmkl_intel_ilp64 -lmkl_core -lmkl_intel_thread -Wl,--end-group -Bdynamic"
 	    return
 	fi
     done
