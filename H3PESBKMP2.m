@@ -8,7 +8,7 @@ function [ varargout ] = H3PESBKMP2(r1, r2, r3)
 persistent first
 
 if isempty(first) 
-  fprintf(1, 'To use BKMP2 PES\n');
+  fprintf(' To use BKMP2 PES\n');
   first = 0;
 end
 

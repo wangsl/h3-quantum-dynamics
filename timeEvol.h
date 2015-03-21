@@ -22,7 +22,8 @@ public:
 		EvolutionTime &time,
 		const Options &options, 
 		const DumpFunction &dump1, 
-		const DumpFunction &dump2);
+		const DumpFunction &dump2,
+		const mxArray *others);
   
   ~TimeEvolution();
 
@@ -36,6 +37,8 @@ public:
   void time_evolution();
   
 private:
+
+  const mxArray *others;
   
   double *pot;
   Complex *psi;

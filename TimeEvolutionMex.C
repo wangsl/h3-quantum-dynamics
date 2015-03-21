@@ -42,7 +42,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
   DumpFunction dump1(prhs[7]);
   DumpFunction dump2(prhs[8]);
 
-  TimeEvolution time_evol(pot, psi, r1, r2, theta, time, options, dump1, dump2);
+  const mxArray *others = prhs[9];
+
+  TimeEvolution time_evol(pot, psi, r1, r2, theta, time, options, 
+			  dump1, dump2, others);
 
   //cout << " module: " << time_evol.module_for_psi() << endl;
   

@@ -26,7 +26,8 @@ TimeEvolution::TimeEvolution(const MatlabArray<double> &m_pot_,
 			     EvolutionTime &time_,
 			     const Options &options_,
 			     const DumpFunction &dump1_,
-			     const DumpFunction &dump2_) :
+			     const DumpFunction &dump2_,
+			     const mxArray *others_) :
   m_pot(m_pot_), 
   m_psi(m_psi_), 
   r1(r1_),
@@ -36,6 +37,7 @@ TimeEvolution::TimeEvolution(const MatlabArray<double> &m_pot_,
   options(options_),
   dump1(dump1_),
   dump2(dump2_),
+  others(others_),
   _legendre_psi(0), 
   exp_ipot_dt(0), 
   exp_irot_dt_2(0), 
@@ -692,20 +694,20 @@ void TimeEvolution::time_evolution()
   for(int i_step = 0; i_step < total_steps; i_step++) {
     
     cout << "\n Step: " << i_step << endl;
-
-    cout << " Module: " << module_for_psi() << endl;
     
     if(i_step == 0 && steps == 0)
       pre_evolution_with_potential_dt_2();
     
     evolution_dt();
-
+    
     dump_psi();
-
+    
+    cout << " module: " << module_for_psi() << endl;
+    
     if(options.wave_to_matlab) {
       mxArray *mx[] = { (mxArray *) r1.mx, (mxArray *) r2.mx, (mxArray *) theta.mx,
 			(mxArray *) m_pot.mx, (mxArray *) m_psi.mx, (mxArray *) time.mx,
-			(mxArray *) options.mx 
+			(mxArray *) options.mx, const_cast<mxArray *>(others)
       };
       
       const int n = sizeof(mx)/sizeof(mxArray *);
