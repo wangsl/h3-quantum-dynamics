@@ -10,6 +10,8 @@ format long
 global UseLSTH
 global H2eV 
 
+global H3Data
+
 setenv('OMP_NUM_THREADS', '20');
 
 % UseLSTH = true;
@@ -72,7 +74,7 @@ fprintf(' Dviding surface: %.8f\n', r2Div);
 
 % angle:
 
-dimensions = 3;
+dimensions = 2;
 
 if dimensions == 2 
   % for 2 dimensional case
@@ -117,15 +119,26 @@ CRP.CRP = zeros(size(CRP.energy));
 
 % wrapper the data will not used in C++ as others
  
-others.divSurf = divSurf;
-others.CRP = CRP;
+H3Data.divSurf = divSurf;
+H3Data.CRP = CRP;
 
 % time evolution
 
+H3Data.r1 = r1;
+H3Data.r2 = r2;
+H3Data.theta = theta;
+H3Data.pot = pot;
+H3Data.psi = psi;
+H3Data.time = time;
+H3Data.options = options;
+H3Data.dump1 = dump1;
+H3Data.dump2 = dump2;
+
 tic
-TimeEvolutionMex(r1, r2, theta, pot, psi, time, options, ...
-		 dump1, dump2, others)
+TimeEvolutionMex(H3Data)
 toc
+
+return
 
 tic
 PSI = psi(1:2:end, :, :) + j*psi(2:2:end, :, :);

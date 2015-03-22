@@ -23,3 +23,12 @@ void wavepacket_to_matlab(const char *script, const int nrhs, mxArray *prhs[])
 
   insist(!mexCallMATLAB(0, NULL, nrhs, prhs, script));
 }
+
+void wavepacket_to_matlab(const char *script)
+{
+  if(!file_exist(script + Str(".m"))) return;
+
+  cout << " Matlab script " << script << endl;
+
+  insist(!mexCallMATLAB(0, NULL, 0, NULL, script));
+}

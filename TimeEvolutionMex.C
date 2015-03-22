@@ -23,40 +23,51 @@ void mexFunction( int nlhs, mxArray *plhs[],
   
   std::cout << " 3D Time evolotion" << std::endl;
 
-  insist(nrhs > 0);
+  insist(nrhs == 1);
 
-  RadialCoordinate r1(prhs[0]);
+  mxArray *mxPtr = 0;
+
+  mxPtr = mxGetField(prhs[0], 0, "r1");
+  insist(mxPtr);
+  RadialCoordinate r1(mxPtr);
+
+  mxPtr = mxGetField(prhs[0], 0, "r2");
+  insist(mxPtr);
+  RadialCoordinate r2(mxPtr);
+
+  mxPtr = mxGetField(prhs[0], 0, "theta");
+  insist(mxPtr);
+  AngleCoordinate theta(mxPtr);
   
-  RadialCoordinate r2(prhs[1]);
+  mxPtr = mxGetField(prhs[0], 0, "pot");
+  insist(mxPtr);
+  MatlabArray<double> pot(mxPtr);
   
-  AngleCoordinate theta(prhs[2]);
+  mxPtr = mxGetField(prhs[0], 0, "psi");
+  insist(mxPtr);
+  MatlabArray<Complex> psi(mxPtr);
   
-  MatlabArray<double> pot(prhs[3]);
+  mxPtr = mxGetField(prhs[0], 0, "time");
+  insist(mxPtr);
+  EvolutionTime time(mxPtr);
+  
+  mxPtr = mxGetField(prhs[0], 0, "options");
+  insist(mxPtr);
+  Options options(mxPtr);
 
-  MatlabArray<Complex> psi(prhs[4]);
+  mxPtr = mxGetField(prhs[0], 0, "dump1");
+  insist(mxPtr);
+  DumpFunction dump1(mxPtr);
 
-  EvolutionTime time(prhs[5]);
-
-  Options options(prhs[6]);
-
-  DumpFunction dump1(prhs[7]);
-  DumpFunction dump2(prhs[8]);
-
-  const mxArray *others = prhs[9];
-
+  mxPtr = mxGetField(prhs[0], 0, "dump2");
+  insist(mxPtr);
+  DumpFunction dump2(mxPtr);
+  
   TimeEvolution time_evol(pot, psi, r1, r2, theta, time, options, 
-			  dump1, dump2, others);
-
-  //cout << " module: " << time_evol.module_for_psi() << endl;
-  
-  const int n1 = r1.n;
-  const int n2 = r2.n;
-  const int n3 = theta.n;
-  
-  const double n1n2 = n1*n2;
+			  dump1, dump2);
 
   time_evol.time_evolution();
-
+  
   std::cout.flush();
   std::cout.precision(np);
 }

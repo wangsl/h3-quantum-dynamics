@@ -2,8 +2,11 @@
 % Initial State Selected Cummulative Reaction Probabilities
 % (ISSCRP)
 
-function [ CRPOut ] = ISSCRP(r1, r2, theta, psi, CRPIn, divSurf, ...
-			     time)
+function [ ] = ISSCRP()
+%r1, r2, theta, psi, CRPIn, divSurf, ...
+%time)
+
+global H3Data
 global H2eV
 
 fprintf(' Calculate wave in energy\n');
@@ -11,30 +14,30 @@ fprintf(' Calculate wave in energy\n');
 persistent has_CRP_plot 
 persistent h_CRP 
 
-persistent CRP
+%persistent CRP
 
-if isempty(CRP)
-  CRP = CRPIn;
-end
+%if isempty(CRP)
+%  CRP = CRPIn;
+%end
 
-dr2 = r2.dr;
+dr2 = H3Data.r2.dr;
 
-n2DivSurf = divSurf.n;
+n2DivSurf = H3Data.divSurf.n;
 
-nPoints = CRP.n_gradient_points;
+nPoints = H3Data.CRP.n_gradient_points;
 n = int32((nPoints-1)/2);
 
-fai = psi(1:2:end, (n2DivSurf-n):(n2DivSurf+n), :) + ...
-      j*psi(2:2:end, (n2DivSurf-n):(n2DivSurf+n), :);
+fai = H3Data.psi(1:2:end, (n2DivSurf-n):(n2DivSurf+n), :) + ...
+      j*H3Data.psi(2:2:end, (n2DivSurf-n):(n2DivSurf+n), :);
 
 [ fai, Dfai ] = Gradient3(dr2, fai);
 
-dt = time.time_step;
-nt = time.steps;
+dt = H3Data.time.time_step;
+nt = H3Data.time.steps;
 t = double(nt)*dt;
 
-E = CRP.energy;
-eH2 = CRP.eH2;
+E = H3Data.CRP.energy;
+eH2 = H3Data.CRP.eH2;
 
 if nt == 1
   f = exp(j*(E+eH2)*t)*(dt/2);
@@ -52,18 +55,18 @@ Dfai = reshape(Dfai, [n1*nTheta, 1]);
 fai = fai*f;
 Dfai = Dfai*f;
 
-CRP.faiE(:,:,:) = CRP.faiE(:,:,:) + reshape(fai, [n1, nTheta, nE]);
-CRP.DfaiE = CRP.DfaiE + reshape(Dfai, [n1, nTheta, nE]);
+H3Data.CRP.faiE = H3Data.CRP.faiE + reshape(fai, [n1, nTheta, nE]);
+H3Data.CRP.DfaiE = H3Data.CRP.DfaiE + reshape(Dfai, [n1, nTheta, nE]);
 
 if mod(nt, 20) ~= 0
   return
 end
 
-faiE = CRP.faiE;
-DfaiE = CRP.DfaiE;
-eta2 = CRP.etaSq;
-dr1 = r1.dr;
-mu2 = r2.mass;
+faiE = H3Data.CRP.faiE;
+DfaiE = H3Data.CRP.DfaiE;
+eta2 = H3Data.CRP.etaSq;
+dr1 = H3Data.r1.dr;
+mu2 = H3Data.r2.mass;
 
 % sum over r1
 crp = sum(conj(faiE).*DfaiE);
@@ -71,11 +74,11 @@ crp = reshape(crp, [nTheta, nE]);
 
 % sum over theta
 crp = reshape(crp, [nTheta, nE]);
-crp = theta.w'*crp;
+crp = H3Data.theta.w'*crp;
 
-CRP.CRP = imag(crp)./eta2*(dr1/mu2);
+H3Data.CRP.CRP = imag(crp)./eta2*(dr1/mu2);
 
-crp = CRP.CRP;
+crp = H3Data.CRP.CRP;
 
 if isempty(has_CRP_plot)
   

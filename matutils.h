@@ -15,7 +15,8 @@
 
 void MatlabCrashLoc(const char *message, const char *file_name, const int line);
 
-void wavepacket_to_matlab(const char *script, const int nrhs = 0, mxArray *prhs[] = 0);
+void wavepacket_to_matlab(const char *script, const int nrhs, mxArray *prhs[]);
+void wavepacket_to_matlab(const char *script);
 
 inline void *mxGetData(const mxArray *mx, const char *field)
 {
