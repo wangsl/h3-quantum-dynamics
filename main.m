@@ -32,13 +32,13 @@ H2eV = 27.21138505;
 
 % time
 
-time.total_steps = int32(2000);
+time.total_steps = int32(4000);
 time.time_step = 5;
 time.steps = int32(0);
 
 % r1: R
 
-r1.n = int32(512);
+r1.n = int32(256);
 r1.r = linspace(0.4, 14.0, r1.n);
 r1.dr = r1.r(2) - r1.r(1);
 r1.mass = 2*mH/3;
@@ -52,20 +52,20 @@ dump1.dump = WoodsSaxon(dump1.Cd, dump1.xd, r1.r);
 
 % r2: r
 
-r2.n = int32(512);
-r2.r = linspace(0.4, 10.0, r2.n);
+r2.n = int32(256);
+r2.r = linspace(0.4, 12.0, r2.n);
 r2.dr = r2.r(2) - r2.r(1);
 r2.mass = mH/2;
 
 % dump functions
 
 dump2.Cd = 3.0;
-dump2.xd = 8.0;
+dump2.xd = 10.0;
 dump2.dump = WoodsSaxon(dump2.Cd, dump2.xd, r2.r);
 
 % dividing surface
 
-divSurf.rd = 5.0;
+divSurf.rd = 7.0;
 divSurf.n = int32((divSurf.rd - min(r2.r))/r2.dr);
 r2Div = double(divSurf.n)*r2.dr + min(r2.r);
 fprintf(' Dviding surface: %.8f\n', r2Div);
@@ -83,11 +83,13 @@ if dimensions == 2
 else 
   % for 3 dimensional case
   theta.n = int32(120);
-  theta.m = int32(100);
+  theta.m = int32(110);
   [ theta.x, theta.w ] = GaussLegendre(theta.n);
 end
   
 theta.legendre = LegendreP2(double(theta.m), theta.x);
+% transpose Legendre polynomials in order to do 
+% matrix multiplication in C++ and Fortran LegTransform.F
 theta.legendre = theta.legendre';
 
 % options
@@ -97,7 +99,7 @@ options.wave_to_matlab = 'C2Matlab.m';
 pot = H3PESJacobi(r1.r, r2.r, acos(theta.x), masses);
 
 jRot = 0;
-nVib = 0;
+nVib = 1;
 
 [ psi, eH2, psiH2 ] = InitWavePacket(r1, r2, theta, jRot, nVib);
 
