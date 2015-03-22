@@ -11,19 +11,20 @@ template<class T> class Mat
 {
   struct MatRep
   {
-    int *ref;
-    int n, m;
+    int ref, n, m, delete_p;
     T *p;
     T **pp;
-    MatRep(int nn, int mm) : ref(new int(1)), n(nn), m(mm), p(new T[n*m]), 
-			     pp(new T*[m])
+    
+    MatRep(int nn, int mm) : ref(1), n(nn), m(mm), delete_p(1),
+			     p(new T[n*m]), pp(new T*[m])
     { 
       for (int j = 0; j < m; j++)
 	pp[j] = p + j*n;
     }
     
     // add by Shenglong Wang
-    MatRep(int nn, int mm, T *q) : ref(0), n(nn), m(mm), p(q), pp(new T*[m])
+    MatRep(int nn, int mm, T *q) : ref(1), n(nn), m(mm), delete_p(0),
+				   p(q), pp(new T*[m])
     { 
       for(int j = 0; j < m; j++)
 	pp[j] = p + j*n;
@@ -31,12 +32,8 @@ template<class T> class Mat
     
     ~MatRep() 
     { 
-      if(ref) {
-	delete [] p; 
-	delete [] pp;
-	p = 0;
-	pp = 0; 
-      } 
+      if(delete_p && p) { delete [] p; p = 0; }
+      if(pp) { delete [] pp; pp = 0; }
     } 
     
     T & operator()(int i, int j)
@@ -46,21 +43,10 @@ template<class T> class Mat
     }
   };
   
-  /*
   void destroy()
   {
-  if (--rep->ref == 0) {
-  delete rep;
-  rep = 0;
-  }
-  }
-  */
-  
-  void destroy()
-  {
-    if (rep->ref && --(*rep->ref) == 0) {
-      delete rep;
-      rep = 0;
+    if (--rep->ref == 0) {
+      if(rep) { delete rep; rep = 0; }
     }
   }
   
@@ -83,7 +69,7 @@ public:
   Mat(int n = 0, int m = 0) : rep(new MatRep(n,m))
   { }
   Mat(const Mat<T> &mat) : rep(mat.rep)
-  { if(rep->ref) (*rep->ref)++; }
+  { rep->ref++; }
   
   Mat(int n, int m, const T &t) : rep(new MatRep(n,m))
   {
@@ -100,8 +86,7 @@ public:
   
   Mat<T> & operator=(const Mat<T> &mat)
   { 
-    if(mat.rep->ref)
-      (*mat.rep->ref)++;
+    mat.rep->ref++;
     destroy();
     rep = mat.rep;
     return *this;

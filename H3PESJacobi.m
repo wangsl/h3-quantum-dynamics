@@ -3,9 +3,7 @@
 
 function [ V ] = H3PESJacobi(R, r, Theta, masses)
 
-% carefully check f2 and f3
-
-f2 = masses(2)/(masses(2)+masses(3));
+f2 = masses(3)/(masses(2)+masses(3));
 f3 = 1 - f2;
 
 nR = length(R);

@@ -17,8 +17,6 @@ g = (1/(pi*delta^2))^(1/4) * ...
 
 eH2
 
-%plot(R2.r, psiH2)
-
 P = LegendreP(jRot, Theta.x);
 P = sqrt(jRot+1/2)*P;
 
@@ -31,7 +29,4 @@ psi(1:2:end, :) = real(g).'*psiP;
 psi(2:2:end, :) = imag(g).'*psiP;
 
 psi = reshape(psi, [2*n1, n2, nTheta]);
-
-
-
 

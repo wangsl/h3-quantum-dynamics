@@ -9,18 +9,13 @@ format long
 
 global UseLSTH
 global H2eV 
-
 global H3Data
 
 setenv('OMP_NUM_THREADS', '20');
 
 % UseLSTH = true;
 
-%MassAU = 1.822888484929367e+03;
-
-ElectronMass = 9.10938291E-31;
-AMU = 1.66053892E-27;
-MassAU = AMU/ElectronMass;
+MassAU = 1.822888484929367e+03;
 
 mH = 1.007825*MassAU;
 mD = 2.01410178*MassAU;
@@ -34,13 +29,13 @@ H2eV = 27.21138505;
 
 % time
 
-time.total_steps = int32(5000);
-time.time_step = 5;
+time.total_steps = int32(2000);
+time.time_step = 10;
 time.steps = int32(0);
 
 % r1: R
 
-r1.n = int32(512);
+r1.n = int32(256);
 r1.r = linspace(0.4, 14.0, r1.n);
 r1.dr = r1.r(2) - r1.r(1);
 r1.mass = 2*mH/3;
@@ -54,7 +49,7 @@ dump1.dump = WoodsSaxon(dump1.Cd, dump1.xd, r1.r);
 
 % r2: r
 
-r2.n = int32(512);
+r2.n = int32(256);
 r2.r = linspace(0.4, 12.0, r2.n);
 r2.dr = r2.r(2) - r2.r(1);
 r2.mass = mH/2;
@@ -84,8 +79,8 @@ if dimensions == 2
   theta.w = 2.0;
 else 
   % for 3 dimensional case
-  theta.n = int32(120);
-  theta.m = int32(110);
+  theta.n = int32(80);
+  theta.m = int32(60);
   [ theta.x, theta.w ] = GaussLegendre(theta.n);
 end
   
@@ -98,31 +93,27 @@ theta.legendre = theta.legendre';
 
 options.wave_to_matlab = 'C2Matlab.m';
 
+% setup potential energy surface and initial wavepacket
+
 pot = H3PESJacobi(r1.r, r2.r, acos(theta.x), masses);
 
 jRot = 0;
 nVib = 0;
-
 [ psi, eH2, psiH2 ] = InitWavePacket(r1, r2, theta, jRot, nVib);
 
 % cummulative reaction probabilities
 
-CRP.eH2 = eH2;
+CRP.eDiatomic = eH2;
 CRP.n_gradient_points = 11;
-CRP.eLeft = 0.4/H2eV - eH2;
-CRP.eRight = 4.0/H2eV - eH2;
-CRP.energy = linspace(CRP.eLeft, CRP.eRight, 400);
+eLeft = 0.4/H2eV - eH2;
+eRight = 4.0/H2eV - eH2;
+CRP.energy = linspace(eLeft, eRight, 400);
 CRP.etaSq = EtaSq(r1, CRP.energy);
 CRP.faiE = complex(zeros(r1.n, theta.n, length(CRP.energy)));
 CRP.DfaiE = complex(zeros(r1.n, theta.n, length(CRP.energy)));
 CRP.CRP = zeros(size(CRP.energy));
 
-% wrapper the data will not used in C++ as others
- 
-H3Data.divSurf = divSurf;
-H3Data.CRP = CRP;
-
-% time evolution
+% wrapper data to one structure
 
 H3Data.r1 = r1;
 H3Data.r2 = r2;
@@ -133,70 +124,21 @@ H3Data.time = time;
 H3Data.options = options;
 H3Data.dump1 = dump1;
 H3Data.dump2 = dump2;
+H3Data.divSurf = divSurf;
+H3Data.CRP = CRP;
+
+% time evolution
 
 tic
-TimeEvolutionMex(H3Data)
+TimeEvolutionMex(H3Data);
 toc
 
 return
 
 tic
+psi = H3Data.psi;
 PSI = psi(1:2:end, :, :) + j*psi(2:2:end, :, :);
 a = sum(sum(conj(PSI).*PSI));
 a = reshape(a, [numel(a), 1]);
 sum(theta.w.*a)*r1.dr*r2.dr
 toc
-
-return
-
-pot = H3PESJacobi(r1.r, r2.r, acos(theta.x), masses);
-
-jRot = 6;
-nVib = 4;
-psi = InitWavePacket(r1, r2, theta, jRot, nVib);
-
-PSI = psi(1:2:end, :, :) + j*psi(2:2:end, :, :);
-
-a = sum(sum(conj(PSI).*PSI));
-a = reshape(a, [numel(a), 1]);
-
-sum(theta.w.*a)*r1.dr*r2.dr
-
-clearvars PSI a
-
-return
-
-energy_levels = [ 0 1 10 13 14 15 16 ];
-
-[ e, psi ] = H2WaveFunction(r, energy_levels);
-
-plot(r.r, psi, 'LineWidth', 2);
-legend(arrayfun(@num2str, energy_levels, 'UniformOutput', false));
-
-print -dpdf H2-wavefunction.pdf
-
-return
-
-
-
-return
-
-
-R = linspace(0.45, 14.0, 512);
-r = linspace(0.45, 8.0, 512);
-Theta = linspace(0.0, pi, 180);
-
-tic
-V = H3PESJacobi(R, r, Theta);
-toc
-
-V1 = V(:, :, 1);
-
-[ ~, hPES ] = contour(R, r, V1', [ -0.1:0.01:-0.001 0.001:0.01:0.4 ]);
-set(hPES, 'LineWidth', 0.75);
-set(hPES, 'LineColor', 'black');
-colorbar('vert');
-%axis square
-%hold on;
-
-
