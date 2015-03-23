@@ -4,12 +4,14 @@
 #ifndef MATUTILS_H
 #define MATUTILS_H
 
-#include <mex.h>
-#include <cstring>
-
 #define MCrash(x) MatlabCrashLoc(x, __FILE__, __LINE__)
 #define MatCrash(x) MatlabCrashLoc(x, __FILE__, __LINE__)
 #define MatlabCrash(x) MatlabCrashLoc(x, __FILE__, __LINE__)
+
+#ifdef __cplusplus
+
+#include <mex.h>
+#include <cstring>
 
 #define insist(x) if (!(x)) MatlabCrashLoc("insist failed: " #x, __FILE__, __LINE__)
 
@@ -23,7 +25,6 @@ inline void *mxGetData(const mxArray *mx, const char *field)
   insist(mx);
   mxArray *mxPtr = mxGetField(mx, 0, field);
   if(!mxPtr) return 0;
-  //insist(mxPtr);
   void *ptr = mxGetData(mxPtr);
   if(!mxPtr) return 0;
   return ptr;
@@ -42,5 +43,11 @@ inline char *mxGetString(const mxArray *mx, const char *field)
   if(tmp) { mxFree(tmp); tmp = 0; }
   return string;
 }
+
+#else /* For Fortran */
+
+
+
+#endif
 
 #endif /* MATUTILS_H */

@@ -3,12 +3,12 @@
 % wave function in energy
 
 function [ faiE, DfaiE, crp ] = ISSCRP2(r1, r2, theta, psi, ...
-					divSurf, time, CRP)
+					time, CRP)
 
 fprintf(' Calculate wave in energy\n');
 
 dr2 = r2.dr;
-n2DivSurf = divSurf.n;
+n2DivSurf = CRP.n_dividing_surface;
 
 nPoints = CRP.n_gradient_points;
 n = int32((nPoints-1)/2);
@@ -22,7 +22,7 @@ dt = time.time_step;
 nt = time.steps;
 t = double(nt)*dt;
 
-E = CRP.energy + CRP.eDiatomic;
+E = CRP.energies; 
 
 if nt == 1
   f = exp(j*E*t)*(dt/2);
@@ -45,7 +45,7 @@ DfaiE = CRP.DfaiE + reshape(Dfai, [n1, nTheta, nE]);
 
 % Initial state selected reaction probability
 
-eta2 = CRP.etaSq;
+eta2 = CRP.eta_sq;
 dr1 = r1.dr;
 mu2 = r2.mass;
 

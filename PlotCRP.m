@@ -6,7 +6,7 @@ global H2eV
 persistent has_CRP_plot 
 persistent h_CRP 
 
-E = CRP.energy + CRP.eDiatomic;
+E = CRP.energies;
 crp = CRP.CRP;
 
 if isempty(has_CRP_plot)
@@ -22,7 +22,7 @@ if isempty(has_CRP_plot)
   
   grid on;
   
-  set(gca, 'xtick', [0.4:0.4:max(E)*H2eV]);
+  set(gca, 'xtick', [0.4:0.1:max(E)*H2eV]);
   set(gca, 'ytick', [0.0:0.1:1.2]);
   
   hold off

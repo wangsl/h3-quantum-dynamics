@@ -62,7 +62,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
   mxPtr = mxGetField(prhs[0], 0, "dump2");
   insist(mxPtr);
   DumpFunction dump2(mxPtr);
+
+  mxPtr = mxGetField(prhs[0], 0, "CRP");
+  insist(mxPtr);
+  CummulativeReactionProbabilities CRP(mxPtr);
   
+  //cout << CRP << endl;
+
   TimeEvolution time_evol(pot, psi, r1, r2, theta, time, options, 
 			  dump1, dump2);
 

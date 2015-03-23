@@ -3,6 +3,7 @@
 
 #include <mex.h>
 #include "matutils.h"
+#include "fort.h"
 
 void MatlabCrashLoc(const char *message, const char *file_name, const int line)
 {
@@ -10,4 +11,10 @@ void MatlabCrashLoc(const char *message, const char *file_name, const int line)
   
   sprintf(buf, "Matlab error in module %s, line %d\n %s", file_name, line, message);
   mexErrMsgTxt(buf);
+}
+
+// Fortran version
+void FORT(matlabcrashlock)(const char *message, const char *file_name, const int &line)
+{
+  MatlabCrashLoc(message, file_name, line);
 }

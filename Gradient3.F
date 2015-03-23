@@ -1,6 +1,33 @@
 
 C     $Id$
 
+C     Reference
+C     http://www.trentfguidry.net/post/2010/09/04/Numerical-differentiation-formulas.aspx
+
+#include "matutils.h"
+
+      SubRoutine Gradient3D(N1, N2, N3, N2P, Dx, F, V, G, NPoints)
+      Integer N1, N2, N3, N2P, NPoints
+      Real*8 Dx
+      Complex*16 F(N1,N2,N3), V(N1,N3), G(N1,N3)
+
+      If(NPoints .eq. 3) then
+         Call Gradient3(N1, N2, N3, N2P, Dx, F, V, G)
+      Else If(NPoints .eq. 5) then
+         Call Gradient5(N1, N2, N3, N2P, Dx, F, V, G)
+      Else If(NPoints .eq. 7) then
+         Call Gradient7(N1, N2, N3, N2P, Dx, F, V, G)
+      Else If(NPoints .eq. 9) then
+         Call Gradient9(N1, N2, N3, N2P, Dx, F, V, G)
+      Else If(NPoints .eq. 11) then
+         Call Gradient11(N1, N2, N3, N2P, Dx, F, V, G)
+      Else
+         Call MCrash('NPoints error')
+      EndIf
+
+      End
+
+
       SubRoutine Gradient3(N1, N2, N3, N2P, Dx, F, V, G)
       Implicit None
       Integer N1, N2, N3, N2P

@@ -126,7 +126,33 @@ public:
 private:
   
   const mxArray *mx;
+};
 
+class CummulativeReactionProbabilities
+{
+public:
+
+  friend class TimeEvolution;
+
+  const int &n_dividing_surface; // out
+  const int &n_gradient_points; // out
+  const int &n_energies; // out
+  
+  RVec energies; // out
+  RVec eta_sq; // out
+  RVec CRP; // out
+  
+  CummulativeReactionProbabilities(const mxArray *mx);
+
+private:
+  const mxArray *mx;
+
+  CummulativeReactionProbabilities(const CummulativeReactionProbabilities &);
+  CummulativeReactionProbabilities & operator =(const CummulativeReactionProbabilities &);
+
+  friend ostream & operator <<(ostream &s, const CummulativeReactionProbabilities &c);
+  void write_fields(ostream &s) const;
+  
 };
 
 #endif /* MATLAB_STRUCTURES_H */

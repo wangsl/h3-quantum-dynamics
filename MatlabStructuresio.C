@@ -1,5 +1,5 @@
 
-/* created at: 2015-03-19 11:57:57 */
+/* created at: 2015-03-22 23:02:28 */
 
 #include <iostream>
 using namespace std;
@@ -72,5 +72,24 @@ void Options::write_fields(ostream &s) const
     s << Indent() << "wave_to_matlab " << wave_to_matlab << "\n";
   if (test_name)
     s << Indent() << "test_name " << test_name << "\n";
+}
+
+ostream & operator <<(ostream &s, const CummulativeReactionProbabilities &c)
+{
+  s << " {\n";
+  IndentPush();
+  c.write_fields(s);
+  IndentPop();
+  return s << Indent() << " }";
+}
+
+void CummulativeReactionProbabilities::write_fields(ostream &s) const
+{
+  s << Indent() << "n_dividing_surface " << n_dividing_surface << "\n";
+  s << Indent() << "n_gradient_points " << n_gradient_points << "\n";
+  s << Indent() << "n_energies " << n_energies << "\n";
+  s << Indent() << "energies " << energies << "\n";
+  s << Indent() << "eta_sq " << eta_sq << "\n";
+  s << Indent() << "CRP " << CRP << "\n";
 }
 

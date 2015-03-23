@@ -29,13 +29,13 @@ H2eV = 27.21138505;
 
 % time
 
-time.total_steps = int32(5000);
-time.time_step = 5;
+time.total_steps = int32(40000);
+time.time_step = 1;
 time.steps = int32(0);
 
 % r1: R
 
-r1.n = int32(256);
+r1.n = int32(512);
 r1.r = linspace(0.4, 14.0, r1.n);
 r1.dr = r1.r(2) - r1.r(1);
 r1.mass = 2*mH/3;
@@ -49,7 +49,7 @@ dump1.dump = WoodsSaxon(dump1.Cd, dump1.xd, r1.r);
 
 % r2: r
 
-r2.n = int32(256);
+r2.n = int32(512);
 r2.r = linspace(0.4, 12.0, r2.n);
 r2.dr = r2.r(2) - r2.r(1);
 r2.mass = mH/2;
@@ -62,14 +62,15 @@ dump2.dump = WoodsSaxon(dump2.Cd, dump2.xd, r2.r);
 
 % dividing surface
 
-divSurf.rd = 7.0;
-divSurf.n = int32((divSurf.rd - min(r2.r))/r2.dr);
-r2Div = double(divSurf.n)*r2.dr + min(r2.r);
+%divSurf.rd = 7.0;
+rd = 7.0;
+nDivdSurf = int32((rd - min(r2.r))/r2.dr);
+r2Div = double(nDivdSurf)*r2.dr + min(r2.r);
 fprintf(' Dviding surface: %.8f\n', r2Div);
 
 % angle:
 
-dimensions = 3;
+dimensions = 2;
 
 if dimensions == 2 
   % for 2 dimensional case
@@ -104,14 +105,16 @@ nVib = 0;
 % cummulative reaction probabilities
 
 CRP.eDiatomic = eH2;
-CRP.n_gradient_points = 11;
-eLeft = 0.4/H2eV - eH2;
-eRight = 4.0/H2eV - eH2;
-CRP.energy = linspace(eLeft, eRight, 400);
-CRP.etaSq = EtaSq(r1, CRP.energy);
-CRP.faiE = complex(zeros(r1.n, theta.n, length(CRP.energy)));
-CRP.DfaiE = complex(zeros(r1.n, theta.n, length(CRP.energy)));
-CRP.CRP = zeros(size(CRP.energy));
+CRP.n_dividing_surface = nDivdSurf;
+CRP.n_gradient_points = int32(11);
+CRP.n_energies = int32(200);
+eLeft = 0.4/H2eV;
+eRight = 1.6/H2eV;
+CRP.energies = linspace(eLeft, eRight, CRP.n_energies);
+CRP.eta_sq = EtaSq(r1, CRP.energies-eH2);
+CRP.faiE = complex(zeros(r1.n, theta.n, length(CRP.energies)));
+CRP.DfaiE = complex(zeros(r1.n, theta.n, length(CRP.energies)));
+CRP.CRP = zeros(size(CRP.energies));
 
 % wrapper data to one structure
 
@@ -124,7 +127,6 @@ H3Data.time = time;
 H3Data.options = options;
 H3Data.dump1 = dump1;
 H3Data.dump2 = dump2;
-H3Data.divSurf = divSurf;
 H3Data.CRP = CRP;
 
 % time evolution
