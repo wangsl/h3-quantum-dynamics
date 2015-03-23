@@ -29,8 +29,8 @@ H2eV = 27.21138505;
 
 % time
 
-time.total_steps = int32(2000);
-time.time_step = 10;
+time.total_steps = int32(5000);
+time.time_step = 5;
 time.steps = int32(0);
 
 % r1: R
@@ -79,8 +79,8 @@ if dimensions == 2
   theta.w = 2.0;
 else 
   % for 3 dimensional case
-  theta.n = int32(80);
-  theta.m = int32(60);
+  theta.n = int32(100);
+  theta.m = int32(100);
   [ theta.x, theta.w ] = GaussLegendre(theta.n);
 end
   
