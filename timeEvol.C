@@ -4,9 +4,9 @@
 #include "timeEvol.h"
 #include "mat.h"
 
-//#define _PrintFunction_ { cout << " " << __func__ << endl; }
+#define _PrintFunction_ { cout << " " << __func__ << endl; }
 
-#define _PrintFunction_ { }
+//#define _PrintFunction_ { }
 
 extern "C" {
   void FORT(forwardlegendretransform)(const Complex *CPsi, Complex *LPsi, 
@@ -16,6 +16,20 @@ extern "C" {
   void FORT(backwardlegendretransform)(Complex *CPsi, const Complex *LPsi, 
 				       const int &NR, const int &NTheta, const int &NLeg, 
 				       const double *LegP);
+  void FORT(gradient3d)(const int &N1, const int &N2, const int &N3, 
+			const int &N2DivSurf, const double &Dx, const Complex *F, 
+			Complex *V, Complex *G, const int &NPoints);
+  
+  // PsiTimeToPsiEnergyOnSurface
+  void FORT(psitimetopsienergyonsurface)(const int &N1, const int &NTheta, const int &NEnergies,
+					 const Complex *ExpIETDt, const Complex *PsiT, 
+					 const Complex *DPsiT, Complex *faiE, Complex *DFaiE);
+
+  // CalculateCRP
+  void FORT(calculatecrp)(const int &N1, const int &NTheta, const int &NE, 
+			  const double &Dr1, const double &mu2, 
+			  const double *W, const double *EtaSq,
+			  const Complex *Fai, const Complex *DFai, double *CRP);
 }
 
 TimeEvolution::TimeEvolution(const MatlabArray<double> &m_pot_,
@@ -26,30 +40,25 @@ TimeEvolution::TimeEvolution(const MatlabArray<double> &m_pot_,
 			     EvolutionTime &time_,
 			     const Options &options_,
 			     const DumpFunction &dump1_,
-			     const DumpFunction &dump2_) :
-  m_pot(m_pot_), 
-  m_psi(m_psi_), 
-  r1(r1_),
-  r2(r2_), 
-  theta(theta_), 
-  time(time_),
-  options(options_),
-  dump1(dump1_),
-  dump2(dump2_),
+			     const DumpFunction &dump2_,
+			     CummulativeReactionProbabilities &CRP_
+			     ) :
+  m_pot(m_pot_),  m_psi(m_psi_), 
+  r1(r1_), r2(r2_), theta(theta_), time(time_), options(options_),
+  dump1(dump1_), dump2(dump2_),
+  CRP(CRP_),
   _legendre_psi(0), 
-  exp_ipot_dt(0), 
-  exp_irot_dt_2(0), 
-  exp_ikin_dt(0),
+  exp_ipot_dt(0), exp_irot_dt_2(0), exp_ikin_dt(0),
   weight_legendre(0),
-  dump(0)
+  dump(0),
+  exp_ienergy_dt(0), exp_ienergy_t(0),
+  psi_surface(0), d_psi_surface(0), fai_surface(0), d_fai_surface(0)
 { 
   pot = m_pot.data;
   insist(pot);
 
   psi = m_psi.data;
   insist(psi);
-
-  _PrintFunction_;
 } 
 
 TimeEvolution::~TimeEvolution()
@@ -66,6 +75,12 @@ TimeEvolution::~TimeEvolution()
   if(exp_ikin_dt) { delete [] exp_ikin_dt; exp_ikin_dt = 0; }
   if(dump) { delete [] dump; dump = 0; }
   if(weight_legendre) { delete [] weight_legendre; weight_legendre = 0; }
+  if(exp_ienergy_dt) { delete [] exp_ienergy_dt; exp_ienergy_dt = 0; }
+  if(exp_ienergy_t) { delete [] exp_ienergy_t; exp_ienergy_t = 0; }
+  if(psi_surface) { delete [] psi_surface; psi_surface = 0; }
+  if(d_psi_surface) { delete [] d_psi_surface; d_psi_surface = 0; }
+  if(fai_surface) { delete [] fai_surface; fai_surface = 0; }
+  if(d_fai_surface) { delete [] d_fai_surface; d_fai_surface = 0; }
 }
 
 Complex * &TimeEvolution::legendre_psi()
@@ -421,8 +436,6 @@ void TimeEvolution::setup_exp_ipot_dt()
 {
   if(exp_ipot_dt) return;
 
-  _PrintFunction_;
-  
   const int &n1 = r1.n;
   const int &n2 = r2.n;
   const int &n_theta = theta.n;
@@ -450,8 +463,6 @@ void TimeEvolution::setup_exp_irot_dt_2()
 { 
   if(exp_irot_dt_2) return;
 
-  _PrintFunction_;
-  
   const int &n1 = r1.n;
   const int &n2 = r2.n;
   const int m = theta.m + 1;
@@ -504,8 +515,6 @@ void TimeEvolution::setup_exp_ikin_dt()
 
 void TimeEvolution::pre_evolution_with_potential_dt_2()
 { 
-  _PrintFunction_;
-  
   setup_exp_ipot_dt();
   
   const int &n1 = r1.n;
@@ -527,8 +536,6 @@ void TimeEvolution::pre_evolution_with_potential_dt_2()
 
 void TimeEvolution::evolution_with_potential_dt()
 { 
-  _PrintFunction_;
-
   setup_exp_ipot_dt();
   
   const int &n1 = r1.n;
@@ -550,8 +557,6 @@ void TimeEvolution::evolution_with_potential_dt()
 
 void TimeEvolution::evolution_with_rotational_dt_2()
 {
-  _PrintFunction_;
-
   setup_exp_irot_dt_2();
   
   const int &n1 = r1.n;
@@ -599,16 +604,13 @@ void TimeEvolution::evolution_with_kinetic_dt()
 
 void TimeEvolution::test()
 {
-  kinetic_energy_for_psi();
+  _PrintFunction_;
 
-  forward_legendre_transform();
-  kinetic_energy_for_legendre_psi();
-
-  return;
-
-  setup_exp_ipot_dt();
-  setup_exp_irot_dt_2();
-  setup_exp_ikin_dt();
+  setup_CRP_data();
+  calculate_psi_gradient_on_dividing_surface();
+  update_exp_ienergy_t();
+  psi_time_to_fai_energy_on_surface();
+  _calculate_reaction_probabilities();
 }
 
 void TimeEvolution::evolution_dt()
@@ -659,6 +661,8 @@ void TimeEvolution::time_evolution()
     
     cout << " module: " << module_for_psi() << endl;
     
+    test();
+
     if(options.wave_to_matlab)
       wavepacket_to_matlab(options.wave_to_matlab);
     
@@ -740,4 +744,113 @@ void  TimeEvolution::setup_weight_legendre()
       wp(k,l) = f*w[k]*P(l,k);
     }
   }
+}
+
+void TimeEvolution::setup_CRP_data()
+{
+  if(exp_ienergy_dt && exp_ienergy_t) return;
+  
+  const int &n_dividing_surface = CRP.n_dividing_surface;
+  const int &n_energies = CRP.n_energies;
+  const int &n_gradient_points = CRP.n_gradient_points;
+
+  const int &n1 = r1.n;
+  const int &nTheta = theta.n;
+
+  psi_surface = new Complex [n1*nTheta];
+  insist(psi_surface);
+  
+  d_psi_surface = new Complex [n1*nTheta];
+  insist(d_psi_surface);
+  
+  fai_surface = new Complex [n1*nTheta*n_energies];
+  insist(fai_surface);
+  memset(fai_surface, 0, n1*nTheta*n_energies*sizeof(Complex));
+  
+  d_fai_surface = new Complex [n1*nTheta*n_energies];
+  insist(d_fai_surface);
+  memset(d_fai_surface, 0, n1*nTheta*n_energies*sizeof(Complex));
+  
+  const RVec &e = CRP.energies;
+  const double &dt = time.time_step;
+  
+  exp_ienergy_dt = new Complex [n_energies];
+  insist(exp_ienergy_dt);
+  
+  exp_ienergy_t = new Complex [n_energies];
+  insist(exp_ienergy_t);
+  
+  const Complex I(0.0, 1.0);
+  const Complex dt_complex(dt, 0.0);
+  
+#pragma omp parallel for			\
+  default(shared) schedule(static, 1)
+  for(int i = 0; i < n_energies; i++) {
+    exp_ienergy_dt[i] = exp(I*e[i]*dt);
+    exp_ienergy_t[i] = dt_complex;
+  }
+}
+
+void TimeEvolution::update_exp_ienergy_t()
+{
+  setup_CRP_data();
+
+  const int &n = CRP.n_energies;
+  
+#pragma omp parallel for			\
+  default(shared) schedule(static, 1)
+  for(int i = 0; i < n; i++)
+    exp_ienergy_t[i] *= exp_ienergy_dt[i];
+}
+
+void TimeEvolution::calculate_psi_gradient_on_dividing_surface()
+{
+  const int &n1 = r1.n;
+  const int &n2 = r2.n;
+  const int &nTheta = theta.n;
+  const double &dr2 = r2.dr;
+  
+  const int &n_dividing_surface = CRP.n_dividing_surface;
+  const int &n_gradient_points = CRP.n_gradient_points;
+  
+  insist(psi_surface);
+  insist(d_psi_surface);
+  
+  FORT(gradient3d)(n1, n2, nTheta, n_dividing_surface, dr2,
+		   psi, psi_surface, d_psi_surface, n_gradient_points);
+  
+}
+
+void TimeEvolution::psi_time_to_fai_energy_on_surface()
+{
+  const int &n1 = r1.n;
+  const int &nTheta = theta.n;
+  const int &n_energies = CRP.n_energies;
+  
+  insist(psi_surface);
+  insist(d_psi_surface);
+  insist(fai_surface);
+  insist(d_fai_surface);
+  
+  FORT(psitimetopsienergyonsurface)(n1, nTheta, n_energies, exp_ienergy_t, 
+				    psi_surface, d_psi_surface, 
+				    fai_surface, d_fai_surface);
+}
+
+
+void TimeEvolution::_calculate_reaction_probabilities()
+{
+  const int &n1 = r1.n;
+  const int &nTheta = theta.n;
+  const RVec &w = theta.w;
+  const double &dr1 = r1.dr;
+  const double &mu2 = r2.mass;
+
+  const int &n_energies = CRP.n_energies;
+
+  RVec &crp = CRP.CRP;
+  const RVec &eta_sq = CRP.eta_sq;
+
+  FORT(calculatecrp)(n1, nTheta, n_energies, dr1, mu2, w, eta_sq, 
+		     fai_surface, d_fai_surface, crp);
 }

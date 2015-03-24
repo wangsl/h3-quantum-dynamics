@@ -22,7 +22,6 @@ template<class T> class Mat
 	pp[j] = p + j*n;
     }
     
-    // add by Shenglong Wang
     MatRep(int nn, int mm, T *q) : ref(1), n(nn), m(mm), delete_p(0),
 				   p(q), pp(new T*[m])
     { 
@@ -78,13 +77,12 @@ public:
 	(*this)(i,j) = t;
   }
   
-  // add by Shenglong Wang
   Mat(int n, int m, T *q) : rep(new MatRep(n, m, q)) { }
   
   ~Mat()
   { destroy(); }
   
-  Mat<T> & operator=(const Mat<T> &mat)
+  Mat<T> & operator =(const Mat<T> &mat)
   { 
     mat.rep->ref++;
     destroy();

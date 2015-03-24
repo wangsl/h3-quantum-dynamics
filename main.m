@@ -29,19 +29,19 @@ H2eV = 27.21138505;
 
 % time
 
-time.total_steps = int32(40000);
-time.time_step = 1;
+time.total_steps = int32(2000);
+time.time_step = 5;
 time.steps = int32(0);
 
 % r1: R
 
-r1.n = int32(512);
+r1.n = int32(256);
 r1.r = linspace(0.4, 14.0, r1.n);
 r1.dr = r1.r(2) - r1.r(1);
 r1.mass = 2*mH/3;
 r1.r0 = 8.0;
-r1.k0 = 5.0;
-r1.delta = 0.2;
+r1.k0 = 4.0;
+r1.delta = 0.12;
 
 dump1.Cd = 3.0;
 dump1.xd = 12.0;
@@ -49,28 +49,27 @@ dump1.dump = WoodsSaxon(dump1.Cd, dump1.xd, r1.r);
 
 % r2: r
 
-r2.n = int32(512);
-r2.r = linspace(0.4, 12.0, r2.n);
+r2.n = int32(256);
+r2.r = linspace(0.4, 10.0, r2.n);
 r2.dr = r2.r(2) - r2.r(1);
 r2.mass = mH/2;
 
 % dump functions
 
 dump2.Cd = 3.0;
-dump2.xd = 10.0;
+dump2.xd = 8.0;
 dump2.dump = WoodsSaxon(dump2.Cd, dump2.xd, r2.r);
 
 % dividing surface
 
-%divSurf.rd = 7.0;
-rd = 7.0;
+rd = 5.0;
 nDivdSurf = int32((rd - min(r2.r))/r2.dr);
 r2Div = double(nDivdSurf)*r2.dr + min(r2.r);
 fprintf(' Dviding surface: %.8f\n', r2Div);
 
 % angle:
 
-dimensions = 2;
+dimensions = 3;
 
 if dimensions == 2 
   % for 2 dimensional case
@@ -81,7 +80,7 @@ if dimensions == 2
 else 
   % for 3 dimensional case
   theta.n = int32(100);
-  theta.m = int32(100);
+  theta.m = int32(60);
   [ theta.x, theta.w ] = GaussLegendre(theta.n);
 end
   
@@ -107,9 +106,9 @@ nVib = 0;
 CRP.eDiatomic = eH2;
 CRP.n_dividing_surface = nDivdSurf;
 CRP.n_gradient_points = int32(11);
-CRP.n_energies = int32(200);
+CRP.n_energies = int32(400);
 eLeft = 0.4/H2eV;
-eRight = 1.6/H2eV;
+eRight = 4.0/H2eV;
 CRP.energies = linspace(eLeft, eRight, CRP.n_energies);
 CRP.eta_sq = EtaSq(r1, CRP.energies-eH2);
 CRP.faiE = complex(zeros(r1.n, theta.n, length(CRP.energies)));

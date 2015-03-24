@@ -14,7 +14,7 @@ void MatlabCrashLoc(const char *message, const char *file_name, const int line)
 }
 
 // Fortran version
-void FORT(matlabcrashlock)(const char *message, const char *file_name, const int &line)
+extern "C" void FORT(matlabcrashloc)(const char *message, const char *file_name, const int &line)
 {
   MatlabCrashLoc(message, file_name, line);
 }

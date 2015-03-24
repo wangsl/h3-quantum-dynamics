@@ -67,12 +67,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
   insist(mxPtr);
   CummulativeReactionProbabilities CRP(mxPtr);
   
-  //cout << CRP << endl;
-
   TimeEvolution time_evol(pot, psi, r1, r2, theta, time, options, 
-			  dump1, dump2);
+			  dump1, dump2, CRP);
 
   time_evol.time_evolution();
+  //time_evol.test();
   
   std::cout.flush();
   std::cout.precision(np);

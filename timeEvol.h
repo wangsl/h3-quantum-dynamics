@@ -22,7 +22,10 @@ public:
 		EvolutionTime &time,
 		const Options &options, 
 		const DumpFunction &dump1, 
-		const DumpFunction &dump2);
+		const DumpFunction &dump2,
+		CummulativeReactionProbabilities &CRP
+		);
+
   
   ~TimeEvolution();
 
@@ -50,6 +53,7 @@ private:
   const Options &options;
   const DumpFunction &dump1;
   const DumpFunction &dump2;
+  CummulativeReactionProbabilities &CRP;
 
   Complex *_legendre_psi;
   Complex * &legendre_psi();
@@ -60,6 +64,14 @@ private:
 
   double *weight_legendre;
   double *dump;
+
+  Complex *exp_ienergy_dt;
+  Complex *exp_ienergy_t;
+
+  Complex *psi_surface;
+  Complex *d_psi_surface;
+  Complex *fai_surface;
+  Complex *d_fai_surface;
 
   Vec<FFTWInterface *> fftw_for_psi;
   Vec<FFTWInterface *> fftw_for_legendre_psi;
@@ -88,6 +100,12 @@ private:
   void setup_exp_ipot_dt();
   void setup_exp_irot_dt_2();
   void setup_exp_ikin_dt();
+
+  void setup_CRP_data();
+  void calculate_psi_gradient_on_dividing_surface();
+  void update_exp_ienergy_t();
+  void psi_time_to_fai_energy_on_surface();
+  void _calculate_reaction_probabilities();
 
   int apply_dump() const { return (dump1.dump && dump2.dump) ? 1 : 0; }
   void setup_dump();

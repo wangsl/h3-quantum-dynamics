@@ -15,7 +15,7 @@ CFLAGS =
 
 CXXFLAGS = -std=c++0x -I$(MATLAB_ROOT)/extern/include
 
-FFLAGS = 
+FFLAGS = -132
 
 Link = $(CXX)
 
