@@ -7,6 +7,11 @@ global H3Data
 
 fprintf(' From C2Matlab\n')
 
+if mod(H3Data.time.steps, 100) == 0
+  CRP = H3Data.CRP;
+  save('CRP.mat', 'CRP');
+end
+
 return
 
 if mod(H3Data.time.steps, 200) == 0
