@@ -29,13 +29,13 @@ H2eV = 27.21138505;
 
 % time
 
-time.total_steps = int32(2000);
+time.total_steps = int32(4000);
 time.time_step = 5;
 time.steps = int32(0);
 
 % r1: R
 
-r1.n = int32(512);
+r1.n = int32(256);
 r1.r = linspace(0.4, 14.0, r1.n);
 r1.dr = r1.r(2) - r1.r(1);
 r1.mass = 2*mH/3;
@@ -49,7 +49,7 @@ dump1.dump = WoodsSaxon(dump1.Cd, dump1.xd, r1.r);
 
 % r2: r
 
-r2.n = int32(512);
+r2.n = int32(256);
 r2.r = linspace(0.4, 10.0, r2.n);
 r2.dr = r2.r(2) - r2.r(1);
 r2.mass = mH/2;
@@ -69,7 +69,7 @@ fprintf(' Dviding surface: %.8f\n', r2Div);
 
 % angle:
 
-dimensions = 3;
+dimensions = 2;
 
 if dimensions == 2 
   % for 2 dimensional case
@@ -94,11 +94,10 @@ theta.legendre = theta.legendre';
 options.wave_to_matlab = 'C2Matlab.m';
 
 % setup potential energy surface and initial wavepacket
-
 pot = H3PESJacobi(r1.r, r2.r, acos(theta.x), masses);
 
 jRot = 0;
-nVib = 0;
+nVib = 2;
 [ psi, eH2, psiH2 ] = InitWavePacket(r1, r2, theta, jRot, nVib);
 
 % cummulative reaction probabilities
@@ -111,9 +110,8 @@ eLeft = 0.4/H2eV;
 eRight = 4.0/H2eV;
 CRP.energies = linspace(eLeft, eRight, CRP.n_energies);
 CRP.eta_sq = EtaSq(r1, CRP.energies-eH2);
-%CRP.faiE = complex(zeros(r1.n, theta.n, length(CRP.energies)));
-%CRP.DfaiE = complex(zeros(r1.n, theta.n, length(CRP.energies)));
 CRP.CRP = zeros(size(CRP.energies));
+CRP.calculate_CRP = int32(1);
 
 % wrapper data to one structure
 

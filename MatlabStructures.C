@@ -89,7 +89,8 @@ CummulativeReactionProbabilities::CummulativeReactionProbabilities(const mxArray
   mx(mx),
   n_dividing_surface(*(int *) mxGetData(mx, "n_dividing_surface")),
   n_gradient_points(*(int *) mxGetData(mx, "n_gradient_points")),
-  n_energies(*(int *) mxGetData(mx, "n_energies"))
+  n_energies(*(int *) mxGetData(mx, "n_energies")),
+  calculate_CRP(*(int *) mxGetData(mx, "calculate_CRP"))
 {
   energies = RVec(n_energies, (double *) mxGetData(mx, "energies"));
   eta_sq = RVec(n_energies, (double *) mxGetData(mx, "eta_sq"));

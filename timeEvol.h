@@ -106,6 +106,7 @@ private:
   void update_exp_ienergy_t();
   void psi_time_to_fai_energy_on_surface();
   void _calculate_reaction_probabilities();
+  void calculate_reaction_probabilities();
 
   int apply_dump() const { return (dump1.dump && dump2.dump) ? 1 : 0; }
   void setup_dump();

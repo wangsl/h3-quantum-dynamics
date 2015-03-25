@@ -1,6 +1,8 @@
 
 /* $Id$ */
 
+// http://www.walkingrandomly.com/?p=1795
+
 #include "timeEvol.h"
 #include "mat.h"
 
@@ -660,9 +662,10 @@ void TimeEvolution::time_evolution()
     dump_psi();
     
     cout << " module: " << module_for_psi() << endl;
-    
-    test();
 
+    if(CRP.calculate_CRP)
+      calculate_reaction_probabilities();
+      
     if(options.wave_to_matlab)
       wavepacket_to_matlab(options.wave_to_matlab);
     
@@ -837,7 +840,6 @@ void TimeEvolution::psi_time_to_fai_energy_on_surface()
 				    fai_surface, d_fai_surface);
 }
 
-
 void TimeEvolution::_calculate_reaction_probabilities()
 {
   const int &n1 = r1.n;
@@ -853,4 +855,14 @@ void TimeEvolution::_calculate_reaction_probabilities()
 
   FORT(calculatecrp)(n1, nTheta, n_energies, dr1, mu2, w, eta_sq, 
 		     fai_surface, d_fai_surface, crp);
+}
+
+void TimeEvolution::calculate_reaction_probabilities()
+{
+  cout << " Calculate reaction probabilities" << endl;
+  setup_CRP_data();
+  calculate_psi_gradient_on_dividing_surface();
+  update_exp_ienergy_t();
+  psi_time_to_fai_energy_on_surface();
+  _calculate_reaction_probabilities();
 }

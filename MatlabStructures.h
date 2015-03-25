@@ -137,6 +137,7 @@ public:
   const int &n_dividing_surface; // out
   const int &n_gradient_points; // out
   const int &n_energies; // out
+  const int &calculate_CRP; // out
   
   RVec energies; // out
   RVec eta_sq; // out
