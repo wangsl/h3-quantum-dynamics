@@ -1,9 +1,25 @@
   
 % $Id$
 
-clear all
+function [] = main(jRot, nVib)
+
+format long
+
+if nargin == 0 
+  jRot = 0;
+  nVib = 0;
+end
+
+%jRot
+%nVib
+
+%CRPMatFile = sprintf('CRPMat-j%d-v%d.mat', jRot, nVib)
+
+%return
+
+%clear all
 %close all
-clc
+%clc
 
 format long
 
@@ -22,6 +38,7 @@ mD = 2.01410178*MassAU;
 mT = 3.0160492*MassAU;
 
 masses = [ mH mH mH ];
+% masses = [ mD mH mH ];
 
 vH2Min = -0.174495770896975;
 
@@ -35,10 +52,10 @@ time.steps = int32(0);
 
 % r1: R
 
-r1.n = int32(256);
+r1.n = int32(512);
 r1.r = linspace(0.4, 14.0, r1.n);
 r1.dr = r1.r(2) - r1.r(1);
-r1.mass = 2*mH/3;
+r1.mass = masses(1)*(masses(2)+masses(3))/(masses(1)+masses(2)+masses(3));
 r1.r0 = 8.0;
 r1.k0 = 4.0;
 r1.delta = 0.12;
@@ -49,10 +66,10 @@ dump1.dump = WoodsSaxon(dump1.Cd, dump1.xd, r1.r);
 
 % r2: r
 
-r2.n = int32(256);
+r2.n = int32(512);
 r2.r = linspace(0.4, 10.0, r2.n);
 r2.dr = r2.r(2) - r2.r(1);
-r2.mass = mH/2;
+r2.mass = masses(2)*masses(3)/(masses(2)+masses(3));
 
 % dump functions
 
@@ -69,7 +86,7 @@ fprintf(' Dviding surface: %.8f\n', r2Div);
 
 % angle:
 
-dimensions = 2;
+dimensions = 3;
 
 if dimensions == 2 
   % for 2 dimensional case
@@ -79,8 +96,8 @@ if dimensions == 2
   theta.w = 2.0;
 else 
   % for 3 dimensional case
-  theta.n = int32(120);
-  theta.m = int32(100);
+  theta.n = int32(180);
+  theta.m = int32(120);
   [ theta.x, theta.w ] = GaussLegendre(theta.n);
 end
   
@@ -92,12 +109,13 @@ theta.legendre = theta.legendre';
 % options
 
 options.wave_to_matlab = 'C2Matlab.m';
+options.CRPMatFile = sprintf('CRPMat-j%d-v%d.mat', jRot, nVib);
 
 % setup potential energy surface and initial wavepacket
 pot = H3PESJacobi(r1.r, r2.r, acos(theta.x), masses);
 
-jRot = 0;
-nVib = 2;
+%jRot = 0;
+%nVib = 1;
 [ psi, eH2, psiH2 ] = InitWavePacket(r1, r2, theta, jRot, nVib);
 
 % cummulative reaction probabilities
